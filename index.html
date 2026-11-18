@@ -1,0 +1,989 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scénario 1 – 1MCVB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f6f9; --surface:#ffffff; --surface-2:#eef2f7; --ink:#14213d; --ink-2:#4a5568; --line:#d9e0ea;
+  --brand:#0f3b66; --brand-2:#1f6fb2; --accent:#e8892b; --ok:#1e8e5a; --ok-bg:#e3f5ec; --ko:#c0392b; --ko-bg:#fbe9e7;
+  --z1:#1f6fb2; --z2:#5aa3d8; --z3:#b9d7ef; --shadow:0 1px 2px rgba(16,24,40,.06),0 4px 14px rgba(16,24,40,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1420; --surface:#162032; --surface-2:#1d2a40; --ink:#e8eef7; --ink-2:#a6b3c6; --line:#2b3a52;
+    --brand:#7fb5e6; --brand-2:#5ea2df; --accent:#f0a456; --ok:#4cc38a; --ok-bg:#16352a; --ko:#ef7b6e; --ko-bg:#3a1f1d;
+    --z1:#3b8fd6; --z2:#2c6a9e; --z3:#20425f; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1420; --surface:#162032; --surface-2:#1d2a40; --ink:#e8eef7; --ink-2:#a6b3c6; --line:#2b3a52;
+  --brand:#7fb5e6; --brand-2:#5ea2df; --accent:#f0a456; --ok:#4cc38a; --ok-bg:#16352a; --ko:#ef7b6e; --ko-bg:#3a1f1d;
+  --z1:#3b8fd6; --z2:#2c6a9e; --z3:#20425f; --shadow:none;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--brand-2)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+header.hero{background:linear-gradient(135deg,#0f3b66 0%,#15497c 55%,#1f6fb2 100%);color:#fff;padding:36px 0 28px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.8;font-weight:600}
+.hero h1{font-size:clamp(24px,4vw,36px);line-height:1.15;margin:8px 0 6px;font-weight:800;letter-spacing:-.01em}
+.hero p.sub{margin:0;opacity:.9;font-size:16px}
+.meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:22px}
+.meta div{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:10px 12px}
+.meta b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.75;font-weight:600}
+.meta span{font-weight:600}
+nav.steps{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+nav.steps .wrap{display:flex;gap:6px;overflow-x:auto;padding-top:10px;padding-bottom:10px;align-items:center}
+nav.steps button{flex:0 0 auto;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);border-radius:999px;padding:7px 14px;font:600 13px Inter,sans-serif;cursor:pointer;display:flex;gap:8px;align-items:center}
+nav.steps button .n{width:20px;height:20px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;font-size:11px}
+nav.steps button.active{background:var(--brand);border-color:var(--brand);color:#fff}
+nav.steps button.active .n{background:rgba(255,255,255,.25)}
+nav.steps button.done .n{background:var(--ok);color:#fff}
+.progress{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-2);flex:0 0 auto;padding-left:10px}
+.bar{width:120px;height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .4s}
+main{padding:26px 0 60px}
+section.panel{display:none}
+section.panel.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:18px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 4px;font-size:21px;letter-spacing:-.01em}
+.card h3{margin:18px 0 8px;font-size:16px}
+.kicker{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.lead{color:var(--ink-2);margin:6px 0 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px;letter-spacing:.02em}
+.t-dec{background:#e3f5ec;color:#16774a}.t-ent{background:#fff3dc;color:#9a5b00}
+:root[data-theme="dark"] .t-dec,:root:not([data-theme="light"]) .t-dec{}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-2);font-weight:700;background:var(--surface-2)}
+.code{font-weight:800;color:var(--brand)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+.tablewrap table th:first-child,.tablewrap table td:first-child{padding-left:14px}
+.callout{border-left:4px solid var(--accent);background:var(--surface-2);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0}
+.callout.blue{border-color:var(--brand-2)}
+.tasks{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:6px}
+.tasks li{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;background:var(--surface-2);border-radius:8px}
+.tasks li::before{content:"";flex:0 0 8px;height:8px;margin-top:8px;border-radius:50%;background:var(--brand-2)}
+label.f{display:block;font-weight:600;font-size:13px;margin:12px 0 5px}
+input[type=text],input[type=number],textarea,select{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:9px 11px;font:14px Inter,sans-serif}
+textarea{min-height:84px;resize:vertical}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--brand-2);outline-offset:1px;border-color:transparent}
+.btn{border:0;background:var(--brand);color:#fff;font:600 14px Inter,sans-serif;padding:10px 16px;border-radius:9px;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--brand);border:1px solid var(--line)}
+.btn.acc{background:var(--accent)}
+.btn.sm{padding:7px 12px;font-size:13px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.feedback{margin-top:12px;padding:10px 14px;border-radius:8px;font-weight:600;display:none}
+.feedback.ok{display:block;background:var(--ok-bg);color:var(--ok)}
+.feedback.ko{display:block;background:var(--ko-bg);color:var(--ko)}
+/* classify */
+.cls{display:grid;gap:8px}
+.cls .item{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--surface);color:var(--ink-2);padding:6px 10px;font:600 12px Inter,sans-serif;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--brand);color:#fff}
+.item.good{border-color:var(--ok);background:var(--ok-bg)}
+.item.bad{border-color:var(--ko);background:var(--ko-bg)}
+.item .why{grid-column:1/-1;font-size:13px;color:var(--ink-2);display:none}
+.item.good .why,.item.bad .why{display:block}
+/* quiz */
+.q{margin:14px 0;padding:14px;border:1px solid var(--line);border-radius:10px}
+.q p{margin:0 0 8px;font-weight:600}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:9px 12px;margin:6px 0;cursor:pointer;font:14px Inter,sans-serif}
+.opt:hover{border-color:var(--brand-2)}
+.opt.right{border-color:var(--ok);background:var(--ok-bg)}
+.opt.wrong{border-color:var(--ko);background:var(--ko-bg)}
+.q .exp{font-size:13px;color:var(--ink-2);margin-top:6px;display:none}
+.q.answered .exp{display:block}
+/* map */
+.mapbox{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:18px;align-items:start}
+svg.map{width:100%;height:auto;background:var(--surface-2);border-radius:12px;border:1px solid var(--line)}
+svg .ring{fill:none;stroke:var(--line);stroke-dasharray:4 5}
+svg .ringlbl{font:600 10px Inter,sans-serif;fill:var(--ink-2)}
+svg .town{cursor:pointer}
+svg .town circle{stroke:var(--surface);stroke-width:2}
+svg .town text{font:600 11px Inter,sans-serif;fill:var(--ink);paint-order:stroke;stroke:var(--surface-2);stroke-width:3px}
+svg .town:hover circle{stroke:var(--accent)}
+svg .road{stroke:var(--ink-2);stroke-width:2;opacity:.25;fill:none}
+svg .river{stroke:#5aa3d8;stroke-width:3;opacity:.45;fill:none}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;margin:8px 0}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;border-radius:50%;display:inline-block;border:1px solid var(--line)}
+.zonepick{display:flex;gap:6px;flex-wrap:wrap}
+.zonepick button{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:7px 12px;border-radius:8px;cursor:pointer;font:600 13px Inter,sans-serif;display:flex;gap:6px;align-items:center}
+.zonepick button.on{outline:2px solid var(--brand);outline-offset:1px}
+.zlist{font-size:13px;margin-top:12px;display:grid;gap:6px}
+.zlist div{padding:8px 10px;border-radius:8px;background:var(--surface-2)}
+/* checks */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:7px 13px;cursor:pointer;font:500 13px Inter,sans-serif}
+.chip.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.chip.good{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.chip.bad{background:var(--ko-bg);border-color:var(--ko);color:var(--ko)}
+/* potentiel table */
+.pt input,.pt select{padding:6px 8px;font-size:13px}
+.pt td{padding:6px}
+.pt .score{font-weight:800;color:var(--brand);text-align:center}
+.rank{display:grid;gap:8px;margin-top:14px}
+.rank .r{display:grid;grid-template-columns:150px 1fr 50px;gap:10px;align-items:center;font-size:13px}
+.rank .r .b{height:12px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+.rank .r .b i{display:block;height:100%;background:linear-gradient(90deg,var(--brand-2),var(--accent));border-radius:99px;transition:width .4s}
+/* profiles */
+.prof{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--surface);cursor:pointer;position:relative;transition:.15s}
+.prof:hover{border-color:var(--brand-2)}
+.prof.on{border-color:var(--brand);box-shadow:0 0 0 2px var(--brand) inset}
+.prof h4{margin:0 0 4px;font-size:15px}
+.prof p{margin:0;font-size:13px;color:var(--ink-2)}
+.prof .ic{font-size:22px}
+.prof .pick{position:absolute;top:10px;right:12px;font-size:12px;font-weight:700;color:var(--brand)}
+.teacher{display:none;border:1px dashed var(--accent);background:color-mix(in srgb,var(--accent) 9%,transparent);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:14px}
+body.prof-mode .teacher{display:block}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;margin-top:14px}
+.toolbar .btn{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3)}
+.navfoot{display:flex;justify-content:space-between;gap:10px;margin-top:6px}
+.prodlist{display:grid;gap:8px}
+.prodlist label{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);cursor:pointer}
+.prodlist input{width:18px;height:18px;accent-color:var(--ok)}
+.muted{color:var(--ink-2);font-size:13px}
+footer{color:var(--ink-2);font-size:12px;text-align:center;padding:20px 16px 40px}
+@media (max-width:820px){
+  .grid2,.mapbox{grid-template-columns:1fr}
+  .grid3{grid-template-columns:1fr 1fr}
+  .meta{grid-template-columns:1fr 1fr}
+  .progress .bar{width:70px}
+  .rank .r{grid-template-columns:100px 1fr 40px}
+}
+@media (max-width:520px){
+  .grid3{grid-template-columns:1fr}
+  .cls .item{grid-template-columns:1fr}
+  .card{padding:16px}
+}
+
+.docs h2{display:flex;align-items:center;gap:10px}
+details.doc{border:1px solid var(--line);border-radius:10px;margin:8px 0;background:var(--surface);overflow:hidden}
+details.doc summary{cursor:pointer;padding:12px 14px;font-weight:600;display:flex;gap:10px;align-items:center;list-style:none}
+details.doc summary::-webkit-details-marker{display:none}
+details.doc summary::after{content:"＋";margin-left:auto;color:var(--ink-2);font-weight:700}
+details.doc[open] summary::after{content:"－"}
+details.doc[open] summary{background:var(--surface-2)}
+.dn{flex:0 0 auto;background:var(--brand);color:#fff;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700}
+:root[data-theme="dark"] .dn{color:#0e1420}
+.dtype{font-size:11px;color:var(--ink-2);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.docbody{padding:14px 18px 16px;border-top:1px solid var(--line)}
+.docbody p{margin:8px 0}
+.docbody table{margin:8px 0}
+.docbody ul{margin:6px 0;padding-left:20px}
+.src{font-size:12px;color:var(--ink-2);margin-top:12px;padding-top:8px;border-top:1px dashed var(--line)}
+.sim{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:#fff3dc;color:#9a5b00;text-transform:uppercase;letter-spacing:.04em}
+.real{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:#e3f5ec;color:#16774a;text-transform:uppercase;letter-spacing:.04em}
+.interview p{padding-left:12px;border-left:3px solid var(--line)}
+.interview b{color:var(--brand)}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:10px 0}
+.kpi div{background:var(--surface-2);border-radius:10px;padding:10px;text-align:center}
+.kpi strong{display:block;font-size:20px;color:var(--brand)}
+.kpi span{font-size:12px;color:var(--ink-2)}
+.hbar{display:grid;grid-template-columns:170px 1fr 44px;gap:8px;align-items:center;font-size:13px;margin:4px 0}
+.hbar .b{height:10px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+.hbar .b i{display:block;height:100%;background:var(--brand-2)}
+.uselink{font-size:12.5px;color:var(--ink-2);background:var(--surface-2);border-radius:8px;padding:6px 10px;display:inline-block;margin-bottom:8px}
+@media (max-width:620px){.kpi{grid-template-columns:1fr 1fr}.hbar{grid-template-columns:110px 1fr 40px}}
+
+@media print{
+  details.doc .docbody{display:block}
+  nav.steps,.toolbar,.navfoot,.btn{display:none!important}
+  section.panel{display:block!important;page-break-after:always}
+  body{background:#fff}
+  .card{box-shadow:none;break-inside:avoid}
+  header.hero{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">SGF · 1<sup>re</sup> MCV option B · Scénario 1</div>
+    <h1>Analyser l'environnement commercial pour identifier un potentiel de prospection</h1>
+    <p class="sub">Entreprise support : <b>Car Avenue Peugeot Citroën — Pont-à-Mousson (54)</b></p>
+    <div class="meta">
+      <div><b>Période</b><span>Début d'année</span></div>
+      <div><b>Durée</b><span>3 semaines</span></div>
+      <div><b>Niveau dominant</b><span>🟢 Découverte → 🟡 Entraînement</span></div>
+      <div><b>Nouveau savoir</b><span>La zone de chalandise</span></div>
+    </div>
+    <div class="toolbar">
+      <input id="eleve" type="text" placeholder="Nom et prénom de l'élève" style="max-width:260px;background:rgba(255,255,255,.95);color:#14213d;border:0">
+      <button class="btn sm" onclick="exportAnswers()">⬇ Exporter mes réponses</button>
+      <button class="btn sm" onclick="window.print()">🖨 Imprimer / PDF</button>
+      <button class="btn sm" id="profBtn" onclick="toggleProf()">👁 Mode enseignant</button>
+    </div>
+  </div>
+</header>
+
+<nav class="steps" aria-label="Étapes du scénario">
+  <div class="wrap" id="stepnav">
+    <button data-p="0" class="active"><span class="n">i</span>Situation</button>
+    <button data-p="1"><span class="n">1</span>Entreprise</button>
+    <button data-p="2"><span class="n">2</span>Zone de chalandise</button>
+    <button data-p="3"><span class="n">3</span>Potentiel</button>
+    <button data-p="4"><span class="n">4</span>Prospects</button>
+    <button data-p="5"><span class="n">B</span>Bilan</button>
+    <div class="progress"><span id="ptxt">0 %</span><div class="bar"><i id="pbar"></i></div></div>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ============ 0 SITUATION ============ -->
+<section class="panel active" data-panel="0">
+  <div class="card">
+    <div class="kicker">🎯 Objectif professionnel</div>
+    <h2>Où se trouve le potentiel commercial de la concession ?</h2>
+    <p class="lead">Exploiter les informations relatives à l'environnement commercial de Car Avenue Peugeot Citroën Pont-à-Mousson afin d'identifier une zone de chalandise, d'en analyser le potentiel et de repérer les premiers profils de prospects à cibler.</p>
+  </div>
+
+  <div class="card">
+    <div class="kicker">🏢 Situation professionnelle</div>
+    <h2>Votre mission de commercial(e)</h2>
+    <p>Vous êtes commercial(e) au sein de <b>Car Avenue Peugeot Citroën à Pont-à-Mousson</b>. La concession souhaite développer son activité commerciale en identifiant de nouveaux prospects sur son secteur.</p>
+    <div class="callout"><b>📨 Message de votre responsable :</b><br>« J'ai besoin d'un premier diagnostic de l'environnement commercial de la concession. Dis-moi où se situe le potentiel de prospection et quels profils de clients potentiels on pourrait rechercher. »</div>
+    <p class="muted">Vous connaissez déjà les méthodes de recherche d'informations et les grandes étapes de la démarche mercatique. Vous allez les réutiliser pour analyser le territoire commercial et découvrir une nouvelle notion : <b>la zone de chalandise</b>.</p>
+  </div>
+
+  <div class="card">
+    <div class="kicker">📌 L'entreprise support</div>
+    <h2>Informations de départ</h2>
+    <div class="tablewrap"><table>
+      <tr><th style="width:190px">Élément</th><th>Informations</th></tr>
+      <tr><td><b>Implantation</b></td><td>Car Avenue Peugeot : RN 57, 54700 Pont-à-Mousson. Car Avenue Citroën : avenue Georges Guynemer, 54700 Pont-à-Mousson.</td></tr>
+      <tr><td><b>Activité</b></td><td>Vente de véhicules neufs et d'occasion, activités liées à l'entretien et aux services automobiles.</td></tr>
+      <tr><td><b>Offre</b></td><td>Gamme Peugeot de véhicules particuliers ; offre Citroën comprenant notamment des véhicules thermiques et électriques. Activité d'occasion également présente.</td></tr>
+      <tr><td><b>Services</b></td><td>Après-vente : entretien, réparation, pièces, pneus, garanties et contrats de service.</td></tr>
+      <tr><td><b>À noter</b></td><td>Ces informations servent de point de départ. Vous devrez rechercher et exploiter d'autres informations pour construire votre analyse.</td></tr>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <div class="kicker">🧩 Compétences ciblées</div>
+    <h2>Ce que vous allez travailler</h2>
+    <div class="tablewrap"><table>
+      <tr><th>Code</th><th>Compétence</th><th>Niveau</th><th>Dans ce scénario</th></tr>
+      <tr><td class="code">C1.1</td><td>Assurer la veille commerciale</td><td><span class="tag t-ent">🟡 Entraînement</span></td><td>Sélectionner des informations utiles sur le secteur et l'environnement commercial.</td></tr>
+      <tr><td class="code">C3.1</td><td>Traiter et exploiter l'information ou le contact client</td><td><span class="tag t-ent">🟡 Entraînement</span></td><td>Organiser, croiser et interpréter les informations recueillies.</td></tr>
+      <tr><td class="code">C4B.1</td><td>Rechercher et analyser les informations à des fins d'exploitation</td><td><span class="tag t-ent">🟡 Entraînement</span></td><td>Analyser territoire, clientèle potentielle, concurrence et données commerciales.</td></tr>
+      <tr><td class="code">C4B.2</td><td>Participer à la conception d'une opération de prospection</td><td><span class="tag t-dec">🟢 Découverte</span></td><td>Faire émerger les premiers profils de prospects et préparer la qualification en S2.</td></tr>
+    </table></div>
+    <div class="callout blue"><b>⚠️ Ce qui n'est pas à refaire :</b> la recherche d'informations et la démarche mercatique sont des acquis. Le temps est consacré à leur transfert vers l'analyse territoriale et à l'apprentissage de la zone de chalandise.</div>
+  </div>
+  <div class="navfoot"><span></span><button class="btn" onclick="go(1)">Commencer la mission 1 →</button></div>
+</section>
+
+<!-- ============ 1 MISSION 1 ============ -->
+<section class="panel" data-panel="1">
+  <div class="card">
+    <div class="kicker">Mission 1 · C1.1 · C3.1</div>
+    <h2>Découvrir l'environnement commercial de la concession</h2>
+    <p class="lead">À partir des informations fournies et de recherches guidées (sites officiels Peugeot et Citroën, Pages Jaunes, Google Maps…), identifiez l'activité, l'offre, les services, les types de clients et les éléments clés de l'environnement commercial.</p>
+    <ul class="tasks">
+      <li>Présenter l'entreprise et son activité.</li>
+      <li>Identifier les principales familles de produits/services.</li>
+      <li>Distinguer clients, prospects et partenaires.</li>
+      <li>Repérer les informations utiles pour un commercial.</li>
+    </ul>
+  </div>
+
+  <div class="card docs"><div class="kicker">📂 Dossier ressources · Mission 1</div><h2>Les documents à exploiter</h2><p class="muted">Appuyez-vous sur ces documents pour les activités 1.1 à 1.3. Cliquez sur un document pour l'ouvrir. Les documents marqués <span class="sim">Données simulées</span> sont construits pour l'exercice, à partir d'une situation réaliste.</p><details class="doc"><summary><span class="dn">Doc 1</span><span>Le groupe Car Avenue<br><span class="dtype">Présentation d'entreprise</span></span> <span class="real">Données réelles</span></summary><div class="docbody">
+<p>Car Avenue est un <b>groupe familial de distribution automobile</b> fondé en <b>1920</b>, dont le siège est à Leudelange (Luxembourg). Il est présidé par Stéphane Bailly. Le groupe est implanté au Luxembourg, en Belgique, en Suisse et dans le <b>nord-est de la France</b>, où il est très présent en Lorraine.</p>
+<div class="kpi"><div><strong>≈ 160</strong><span>concessions et sites de services</span></div><div><strong>≈ 2 800</strong><span>collaborateurs</span></div><div><strong>≈ 80 000</strong><span>véhicules neufs et d'occasion vendus par an</span></div><div><strong>≈ 1,8 Md€</strong><span>chiffre d'affaires annuel</span></div></div>
+<p>Le groupe se présente comme le <b>4<sup>e</sup> groupe de distribution automobile français</b> et le 25<sup>e</sup> européen. Il distribue plus de 20 marques, dont <b>Peugeot, Citroën, DS, Opel</b> (marques du constructeur Stellantis), mais aussi Nissan, Kia, Toyota…</p>
+<p>Ses activités : vente de véhicules neufs et d'occasion, entretien et réparation, location courte et longue durée, installation de bornes de recharge, distribution de pièces détachées.</p>
+<p>En Lorraine, le groupe s'est développé en reprenant plusieurs sites, notamment des filiales Citroën autour de Nancy (Laxou, Ludres, Lunéville).</p><div class="src">Source : page employeur Car Avenue sur Moovijob (chiffres communiqués par le groupe, consultée en octobre 2026) ; Le Journal des Entreprises, « Lorraine : Car Avenue reprend les filiales Citroën de Laxou, Ludres et Lunéville ».</div></div></details><details class="doc"><summary><span class="dn">Doc 2</span><span>Les deux sites de Pont-à-Mousson<br><span class="dtype">Fiche d'implantation</span></span> <span class="real">Données réelles</span></summary><div class="docbody">
+<div class="tablewrap"><table>
+<tr><th></th><th>Car Avenue Peugeot</th><th>Car Avenue Citroën</th></tr>
+<tr><td><b>Adresse</b></td><td>RN 57, 54700 Pont-à-Mousson</td><td>Avenue Georges Guynemer, 54700 Pont-à-Mousson</td></tr>
+<tr><td><b>Marque</b></td><td>Peugeot</td><td>Citroën</td></tr>
+<tr><td><b>Activités</b></td><td>Véhicules neufs, occasion, atelier, pièces</td><td>Véhicules neufs (thermiques et électriques), occasion, atelier, pièces</td></tr>
+<tr><td><b>Stock VO en ligne</b> (relevé ponctuel)</td><td>31 véhicules</td><td>13 véhicules</td></tr>
+</table></div>
+<p><b>Situation géographique :</b> Pont-à-Mousson se trouve à mi-chemin entre <b>Nancy et Metz</b>, sur la vallée de la Moselle. La ville est desservie par l'<b>autoroute A31</b> (échangeur à Lesménils, à environ 4 km), l'A313, la RN 57 et une gare SNCF.</p>
+<p class="muted">Le stock d'occasions évolue chaque jour : refaites le relevé vous-même sur le site du groupe.</p><div class="src">Source : sites officiels Peugeot et Citroën (fiches des concessions) ; caravenue.com, stock VO des concessions de Pont-à-Mousson (relevé d'octobre 2026) ; Wikipédia, article « Pont-à-Mousson ».</div></div></details><details class="doc"><summary><span class="dn">Doc 3</span><span>L'offre de la concession<br><span class="dtype">Tableau de synthèse</span></span> <span class="real">Données réelles</span></summary><div class="docbody">
+<div class="tablewrap"><table>
+<tr><th>Famille</th><th>Exemples</th><th>Clientèle concernée</th></tr>
+<tr><td><b>Véhicules neufs particuliers</b></td><td>Peugeot 208, 2008, 308, 3008, 5008 · Citroën C3, C3 Aircross, C4, C5 Aircross</td><td>Particuliers, professionnels</td></tr>
+<tr><td><b>Véhicules électriques et hybrides</b></td><td>Peugeot e-208, e-2008, e-3008 · Citroën ë-C3, ë-C4, Ami</td><td>Navetteurs, entreprises, collectivités</td></tr>
+<tr><td><b>Véhicules utilitaires</b></td><td>Peugeot Partner, Expert, Boxer · Citroën Berlingo, Jumpy, Jumper</td><td>Artisans, commerçants, PME</td></tr>
+<tr><td><b>Véhicules d'occasion</b></td><td>Occasions toutes marques, reprise du véhicule du client</td><td>Jeunes conducteurs, budgets serrés, 2<sup>e</sup> voiture</td></tr>
+<tr><td><b>Après-vente</b></td><td>Entretien, réparation, carrosserie, pneus, pièces et accessoires</td><td>Tous les automobilistes, toutes marques</td></tr>
+<tr><td><b>Services financiers</b></td><td>Crédit, location avec option d'achat (LOA), location longue durée (LLD)</td><td>Particuliers, professionnels, flottes</td></tr>
+<tr><td><b>Garanties et contrats</b></td><td>Extension de garantie, contrats d'entretien, assistance</td><td>Clients VN et VO</td></tr>
+</table></div><div class="src">Source : sites officiels Peugeot et Citroën (gammes commercialisées en 2026). La disponibilité des modèles peut évoluer : vérifiez sur les sites des marques.</div></div></details><details class="doc"><summary><span class="dn">Doc 4</span><span>Entretien avec M. Laurent, chef des ventes<br><span class="dtype">Témoignage professionnel</span></span> <span class="sim">Données simulées</span></summary><div class="docbody">
+<div class="interview">
+<p><b>Qui sont vos clients ?</b><br>« Environ deux tiers de particuliers et un tiers de professionnels. Chez les particuliers, beaucoup de familles des communes autour de Pont-à-Mousson, et des retraités qui nous sont fidèles depuis des années. Côté pro, ce sont surtout des artisans et des petites entreprises qui achètent des utilitaires. »</p>
+<p><b>Avec qui travaillez-vous au quotidien ?</b><br>« Avec le constructeur bien sûr, qui fixe la gamme et les offres nationales. Avec l'organisme de financement de la marque pour la LOA et la LLD. Avec des assureurs qui nous envoient des véhicules en carrosserie. Et avec quelques entreprises locales : dépanneur, contrôle technique, laveur. »</p>
+<p><b>Qu'attendez-vous d'un commercial en prospection ?</b><br>« Qu'il connaisse son secteur : quelles communes se développent, où s'installent les entreprises, où sont nos concurrents. Un bon commercial ne prospecte pas au hasard. »</p>
+<p><b>Quelles sont vos difficultés ?</b><br>« Nancy et Metz sont à une demi-heure : certains clients vont comparer là-bas. Et sur le secteur, les professionnels sont encore peu équipés en électrique. C'est une opportunité. »</p>
+</div><div class="src">Source : entretien construit pour l'exercice (personnage fictif).</div></div></details><details class="doc"><summary><span class="dn">Doc 5</span><span>Client, prospect, partenaire : les définitions<br><span class="dtype">Fiche notion</span></span></summary><div class="docbody">
+<div class="tablewrap"><table>
+<tr><th>Terme</th><th>Définition</th><th>Exemple à la concession</th></tr>
+<tr><td><b>Client</b></td><td>Personne ou entreprise qui a déjà acheté un produit ou utilisé un service.</td><td>Une famille qui fait entretenir sa 3008 à l'atelier.</td></tr>
+<tr><td><b>Client potentiel</b></td><td>Personne ou entreprise qui pourrait avoir besoin de l'offre, mais qui n'est pas encore identifiée précisément.</td><td>« Les jeunes conducteurs du secteur ».</td></tr>
+<tr><td><b>Prospect</b></td><td>Client potentiel identifié (nom, coordonnées) qui n'a pas encore acheté.</td><td>Une auto-école de Pagny-sur-Moselle repérée sur un annuaire.</td></tr>
+<tr><td><b>Prospect qualifié</b></td><td>Prospect pour lequel on connaît le besoin, l'échéance, le budget et le décideur.</td><td>Un artisan qui doit remplacer son utilitaire dans 6 mois.</td></tr>
+<tr><td><b>Partenaire</b></td><td>Acteur qui contribue à l'activité sans être l'acheteur final.</td><td>Constructeur, organisme de financement, assureur, dépanneur.</td></tr>
+</table></div>
+<p><b>Informations utiles au commercial :</b> ce sont celles qui aident à <b>trouver</b> des prospects (localisation, activité, taille), à <b>comprendre leur besoin</b> (véhicule actuel, usage), et à <b>se positionner face à la concurrence</b> (offres, implantations).</p><div class="src">Source : fiche de synthèse rédigée pour le scénario.</div></div></details></div>
+
+  <div class="card">
+    <h3 style="margin-top:0">📇 Activité 1.1 — Fiche d'identité commerciale</h3>
+    <div class="uselink">📎 Ressources : Docs 1, 2, 3 et 4</div>
+    <p class="muted">Complétez la fiche. Indiquez votre source pour chaque information trouvée.</p>
+    <div class="grid2">
+      <div><label class="f">Raison sociale / enseigne</label><input type="text" data-k="m1_nom"></div>
+      <div><label class="f">Groupe / réseau d'appartenance</label><input type="text" data-k="m1_groupe"></div>
+      <div><label class="f">Adresse(s)</label><input type="text" data-k="m1_adresse"></div>
+      <div><label class="f">Marques distribuées</label><input type="text" data-k="m1_marques"></div>
+      <div><label class="f">Activité principale</label><input type="text" data-k="m1_activite"></div>
+      <div><label class="f">Horaires d'ouverture</label><input type="text" data-k="m1_horaires"></div>
+    </div>
+    <label class="f">Familles de produits (VN, VO, VE…)</label><textarea data-k="m1_produits" placeholder="Ex. : véhicules neufs particuliers, véhicules électriques, véhicules d'occasion, utilitaires…"></textarea>
+    <label class="f">Familles de services</label><textarea data-k="m1_services" placeholder="Ex. : entretien, financement, reprise…"></textarea>
+    <label class="f">Types de clientèle (particuliers / professionnels)</label><textarea data-k="m1_clientele"></textarea>
+    <label class="f">Sources consultées</label><input type="text" data-k="m1_sources" placeholder="Ex. : site officiel Peugeot, avis Google, Pappers…">
+    <div class="teacher"><b>Pistes de correction :</b> VN (Peugeot, Citroën), VO, véhicules électriques/hybrides, utilitaires. Services : atelier, entretien, pièces, pneus, carrosserie, garanties, contrats de service, financement/LOA/LLD, reprise. Clientèle : particuliers, professionnels (artisans, TPE/PME, flottes), collectivités. Attendre au moins 3 sources différentes et citées.</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">🧭 Activité 1.2 — Client, prospect ou partenaire ?</h3>
+    <div class="uselink">📎 Ressources : Docs 4 et 5</div>
+    <p class="muted">Classez chaque acteur puis vérifiez vos réponses.</p>
+    <div class="cls" id="cls"></div>
+    <div class="row"><button class="btn" onclick="checkCls()">Vérifier</button><button class="btn ghost" onclick="resetCls()">Recommencer</button></div>
+    <div class="feedback" id="clsFb"></div>
+    <div class="callout blue" style="margin-top:16px"><b>À retenir :</b> un <b>client</b> a déjà acheté ou utilise les services ; un <b>prospect</b> est un client potentiel identifié qui n'a pas encore acheté ; un <b>partenaire</b> contribue à l'activité sans être l'acheteur final (financeur, assureur, constructeur, sous-traitant…).</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">🔍 Activité 1.3 — Les informations utiles au commercial</h3>
+    <div class="uselink">📎 Ressources : Docs 4 et 5</div>
+    <p class="muted">Sélectionnez les informations réellement utiles pour préparer une prospection, puis vérifiez.</p>
+    <div class="chips" id="infoChips"></div>
+    <div class="row"><button class="btn" onclick="checkChips('infoChips','info')">Vérifier</button></div>
+    <div class="feedback" id="infoFb"></div>
+  </div>
+  <div class="navfoot"><button class="btn ghost" onclick="go(0)">← Situation</button><button class="btn" onclick="go(2)">Mission 2 →</button></div>
+</section>
+
+<!-- ============ 2 MISSION 2 ============ -->
+<section class="panel" data-panel="2">
+  <div class="card">
+    <div class="kicker">Mission 2 · C4B.1 · Nouveau savoir</div>
+    <h2>Découvrir la zone de chalandise</h2>
+    <p class="lead">Votre responsable vous demande de déterminer le territoire à partir duquel la concession peut attirer des clients.</p>
+    <ul class="tasks">
+      <li>Définir la zone de chalandise.</li>
+      <li>Comprendre les zones primaire, secondaire et tertiaire.</li>
+      <li>Identifier les critères qui influencent l'attractivité d'un point de vente automobile.</li>
+      <li>Construire une première représentation cartographique de la zone de chalandise.</li>
+    </ul>
+  </div>
+
+  <div class="card docs"><div class="kicker">📂 Dossier ressources · Mission 2</div><h2>Les documents à exploiter</h2><p class="muted">Appuyez-vous sur ces documents pour les activités 2.1 à 2.3. Les documents marqués <span class="sim">Données simulées</span> sont construits pour l'exercice, à partir d'une situation réaliste.</p><details class="doc"><summary><span class="dn">Doc 6</span><span>La zone de chalandise<br><span class="dtype">Fiche notion</span></span></summary><div class="docbody">
+<p>La <b>zone de chalandise</b> est l'<b>aire géographique d'où provient l'essentiel de la clientèle</b> d'un point de vente. Elle permet au commercial de savoir <b>où prospecter</b> en priorité.</p>
+<div class="tablewrap"><table>
+<tr><th>Zone</th><th>Caractéristiques</th><th>Repère habituel</th><th>Part de clientèle</th></tr>
+<tr><td><b style="color:var(--z1)">Primaire</b></td><td>La plus proche. Clientèle dense et fidèle, qui vient souvent.</td><td>Moins de 10 min</td><td>Environ 60 à 70 %</td></tr>
+<tr><td><b style="color:var(--z2)">Secondaire</b></td><td>Clientèle moins dense, qui compare davantage avec les concurrents.</td><td>10 à 20 min</td><td>Environ 20 à 25 %</td></tr>
+<tr><td><b>Tertiaire</b></td><td>Clientèle occasionnelle, attirée par une offre précise (un modèle, un prix, une relation).</td><td>Plus de 20 min</td><td>Environ 10 %</td></tr>
+</table></div>
+<p><b>Comment la délimiter ?</b></p>
+<ul><li><b>Par le temps de trajet</b> (méthode la plus utilisée) : on trace des <b>isochrones</b>, c'est-à-dire des lignes qui relient les lieux situés à un même temps de trajet du point de vente.</li>
+<li><b>Par la distance</b> : des cercles de 5, 10, 20 km (plus simple, mais moins précis).</li>
+<li><b>Par l'origine réelle des clients</b> : on regarde, dans le fichier clients, d'où viennent les acheteurs.</li></ul>
+<p><b>Attention :</b> une zone de chalandise n'est jamais un cercle parfait. Elle est <b>déformée</b> par les axes routiers (qui l'allongent), les obstacles (rivière, forêt) et surtout par la <b>concurrence</b> (qui la coupe).</p>
+<p class="muted">Les pourcentages indiqués sont des ordres de grandeur couramment utilisés en cours ; ils varient selon le type de commerce.</p><div class="src">Source : fiche de synthèse rédigée pour le scénario.</div></div></details><details class="doc"><summary><span class="dn">Doc 7</span><span>Origine géographique des clients de la concession (ventes VN + VO 2025)<br><span class="dtype">Extrait du logiciel de gestion clients</span></span> <span class="sim">Données simulées</span></summary><div class="docbody"><p class="muted">Répartition des acheteurs selon leur commune de résidence.</p><div class="hbar"><span>Pont-à-Mousson</span><div class="b"><i style="width:100%"></i></div><b>34 %</b></div><div class="hbar"><span>Blénod-lès-PàM</span><div class="b"><i style="width:26%"></i></div><b>9 %</b></div><div class="hbar"><span>Dieulouard</span><div class="b"><i style="width:24%"></i></div><b>8 %</b></div><div class="hbar"><span>Pagny-sur-Moselle</span><div class="b"><i style="width:18%"></i></div><b>6 %</b></div><div class="hbar"><span>Maidières</span><div class="b"><i style="width:12%"></i></div><b>4 %</b></div><div class="hbar"><span>Montauville</span><div class="b"><i style="width:9%"></i></div><b>3 %</b></div><div class="hbar"><span>Norroy-lès-PàM</span><div class="b"><i style="width:9%"></i></div><b>3 %</b></div><div class="hbar"><span>Atton</span><div class="b"><i style="width:6%"></i></div><b>2 %</b></div><div class="hbar"><span>Jézainville</span><div class="b"><i style="width:6%"></i></div><b>2 %</b></div><div class="hbar"><span>Vandières</span><div class="b"><i style="width:6%"></i></div><b>2 %</b></div><div class="hbar"><span>Autres communes de la CC*</span><div class="b"><i style="width:26%"></i></div><b>9 %</b></div><div class="hbar"><span>Secteur Thiaucourt</span><div class="b"><i style="width:12%"></i></div><b>4 %</b></div><div class="hbar"><span>Secteur Nomeny</span><div class="b"><i style="width:9%"></i></div><b>3 %</b></div><div class="hbar"><span>Secteur Pompey / Frouard</span><div class="b"><i style="width:9%"></i></div><b>3 %</b></div><div class="hbar"><span>Agglomération de Metz</span><div class="b"><i style="width:9%"></i></div><b>3 %</b></div><div class="hbar"><span>Agglomération de Nancy</span><div class="b"><i style="width:9%"></i></div><b>3 %</b></div><div class="hbar"><span>Toul</span><div class="b"><i style="width:3%"></i></div><b>1 %</b></div><div class="hbar"><span>Autres</span><div class="b"><i style="width:3%"></i></div><b>1 %</b></div><p class="muted">* Communauté de communes du Bassin de Pont-à-Mousson : 33 communes au total.</p><div class="src">Source : extraction construite pour l'exercice (chiffres fictifs, cohérents avec le territoire).</div></div></details><details class="doc"><summary><span class="dn">Doc 8</span><span>Distances et temps de trajet depuis Pont-à-Mousson<br><span class="dtype">Relevé d'itinéraires</span></span> <span class="sim">Données simulées</span></summary><div class="docbody">
+<div class="tablewrap"><table>
+<tr><th>Commune</th><th>Distance (route)</th><th>Temps estimé</th><th>Axe principal</th></tr>
+<tr><td>Blénod-lès-PàM</td><td>≈ 3 km</td><td>≈ 5 min</td><td>RD 657</td></tr>
+<tr><td>Maidières</td><td>≈ 2 km</td><td>≈ 5 min</td><td>RD 958</td></tr>
+<tr><td>Montauville</td><td>≈ 3 km</td><td>≈ 5 min</td><td>RD 958</td></tr>
+<tr><td>Norroy-lès-PàM</td><td>≈ 4 km</td><td>≈ 7 min</td><td>RD 952</td></tr>
+<tr><td>Atton</td><td>≈ 4 km</td><td>≈ 7 min</td><td>RD 910</td></tr>
+<tr><td>Jézainville</td><td>≈ 6 km</td><td>≈ 9 min</td><td>RD 958</td></tr>
+<tr><td>Dieulouard</td><td>≈ 8 km</td><td>≈ 10 min</td><td>RD 657 / A31</td></tr>
+<tr><td>Vandières</td><td>≈ 8 km</td><td>≈ 10 min</td><td>RD 952</td></tr>
+<tr><td>Pagny-sur-Moselle</td><td>≈ 12 km</td><td>≈ 15 min</td><td>RD 952</td></tr>
+<tr><td>Nomeny</td><td>≈ 17 km</td><td>≈ 20 min</td><td>RD 910</td></tr>
+<tr><td>Thiaucourt-Regniéville</td><td>≈ 20 km</td><td>≈ 20 min</td><td>RD 958</td></tr>
+<tr><td>Pompey</td><td>≈ 20 km</td><td>≈ 20 min</td><td>A31</td></tr>
+<tr><td>Nancy</td><td>≈ 30 km</td><td>≈ 30 min</td><td>A31</td></tr>
+<tr><td>Metz</td><td>≈ 32 km</td><td>≈ 30 min</td><td>A31</td></tr>
+<tr><td>Toul</td><td>≈ 45 km</td><td>≈ 40 min</td><td>A31 / RD 611</td></tr>
+</table></div>
+<p class="muted">Valeurs arrondies, hors embouteillages. <b>Votre travail :</b> vérifiez au moins 4 lignes avec un calculateur d'itinéraire et corrigez si besoin.</p><div class="src">Source : estimations arrondies établies pour le scénario, à vérifier avec Google Maps, ViaMichelin ou Géoportail.</div></div></details><details class="doc"><summary><span class="dn">Doc 9</span><span>Qu'est-ce qui attire un client dans une concession ?<br><span class="dtype">Article professionnel</span></span></summary><div class="docbody">
+<p>Acheter une voiture est un achat <b>réfléchi</b> : le client compare, se renseigne en ligne et se déplace rarement plus d'une fois ou deux en concession. Plusieurs facteurs expliquent qu'il choisisse un point de vente plutôt qu'un autre :</p>
+<ul>
+<li><b>La proximité et l'accessibilité</b> : temps de trajet, axes routiers, stationnement. Le client reviendra pour l'entretien, il veut un garage proche de chez lui ou de son travail.</li>
+<li><b>La marque et la gamme</b> : notoriété, modèles disponibles, offre électrique, choix en occasion.</li>
+<li><b>Le prix et le financement</b> : remises, offres de LOA/LLD, valeur de reprise de l'ancien véhicule.</li>
+<li><b>La qualité de l'après-vente</b> : délais d'atelier, véhicule de prêt, avis en ligne.</li>
+<li><b>La relation commerciale</b> : accueil, conseil, suivi, confiance envers le vendeur.</li>
+<li><b>La concurrence proche</b> : si une autre concession de la même marque ou d'une marque concurrente est plus près du client, la zone d'attraction se réduit.</li>
+</ul>
+<p>Pour une concession de ville moyenne comme Pont-à-Mousson, la <b>proximité de deux grandes agglomérations</b> (Nancy et Metz) représente à la fois une menace (les clients peuvent aller comparer) et une opportunité (de nombreux navetteurs passent chaque jour par l'A31).</p><div class="src">Source : article rédigé pour le scénario à partir des pratiques de la distribution automobile.</div></div></details><details class="doc"><summary><span class="dn">Doc 10</span><span>Méthode : réaliser la carte de la zone de chalandise<br><span class="dtype">Fiche méthode</span></span></summary><div class="docbody">
+<ol>
+<li>Ouvrez <b>Géoportail</b> (geoportail.gouv.fr) ou <b>Google My Maps</b>.</li>
+<li>Placez un repère sur la concession (RN 57 ou avenue Guynemer, Pont-à-Mousson).</li>
+<li>Sur Géoportail : menu <b>Outils › Calculer une isochrone</b>. Choisissez « voiture », puis 10 min, puis 20 min, puis 30 min.</li>
+<li>Repérez les communes situées dans chaque courbe.</li>
+<li>Croisez avec le <b>Doc 7</b> : la zone primaire doit regrouper l'essentiel des clients.</li>
+<li>Ajoutez les concurrents (Doc 13) : ils peuvent « couper » votre zone.</li>
+<li>Coloriez : zone primaire (foncé), secondaire (moyen), tertiaire (clair). Ajoutez titre, légende, source.</li>
+</ol>
+<p class="muted">Vous pouvez aussi utiliser la carte interactive de l'activité 2.3 comme brouillon.</p><div class="src">Source : fiche méthode rédigée pour le scénario.</div></div></details></div>
+
+  <div class="card">
+    <h3 style="margin-top:0">📘 Activité 2.1 — Je découvre la notion</h3>
+    <div class="uselink">📎 Ressources : Doc 6</div>
+    <div id="quiz"></div>
+    <div class="callout"><b>Définition à retenir :</b> la <b>zone de chalandise</b> est l'aire géographique d'où provient l'essentiel de la clientèle d'un point de vente. On la découpe généralement selon le <b>temps d'accès</b> (isochrones) ou la distance :
+      <ul style="margin:6px 0 0">
+        <li><b>Zone primaire</b> : la plus proche, la plus forte part de clients (souvent moins de 10 min).</li>
+        <li><b>Zone secondaire</b> : clientèle moins dense, plus exposée à la concurrence (environ 10 à 20 min).</li>
+        <li><b>Zone tertiaire</b> : clientèle occasionnelle, attirée par une offre ou un service spécifique (au-delà de 20 min).</li>
+      </ul></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">⚖️ Activité 2.2 — Ce qui rend une concession attractive</h3>
+    <div class="uselink">📎 Ressources : Doc 9</div>
+    <p class="muted">Sélectionnez les critères qui influencent réellement l'attractivité d'un point de vente automobile.</p>
+    <div class="chips" id="critChips"></div>
+    <div class="row"><button class="btn" onclick="checkChips('critChips','crit')">Vérifier</button></div>
+    <div class="feedback" id="critFb"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">🗺️ Activité 2.3 — Je construis la zone de chalandise</h3>
+    <div class="uselink">📎 Ressources : Docs 7, 8 et 10</div>
+    <p class="muted">Choisissez une zone, puis cliquez sur les communes pour les y affecter. Appuyez-vous sur l'origine des clients (Doc 7) et les temps de trajet (Doc 8). Les positions de la carte sont schématiques.</p>
+    <div class="mapbox">
+      <div>
+        <svg class="map" id="map" viewBox="0 0 520 520" role="img" aria-label="Carte schématique autour de Pont-à-Mousson"></svg>
+        <div class="legend"><span><i style="background:var(--z1)"></i>Primaire</span><span><i style="background:var(--z2)"></i>Secondaire</span><span><i style="background:var(--z3)"></i>Tertiaire</span><span><i style="background:var(--surface)"></i>Non affectée</span></div>
+      </div>
+      <div>
+        <div class="zonepick" id="zonepick">
+          <button data-z="1" class="on"><i style="width:12px;height:12px;border-radius:50%;background:var(--z1);display:inline-block"></i>Primaire</button>
+          <button data-z="2"><i style="width:12px;height:12px;border-radius:50%;background:var(--z2);display:inline-block"></i>Secondaire</button>
+          <button data-z="3"><i style="width:12px;height:12px;border-radius:50%;background:var(--z3);display:inline-block"></i>Tertiaire</button>
+          <button data-z="0">Effacer</button>
+        </div>
+        <div class="zlist" id="zlist"></div>
+        <div class="row"><button class="btn" onclick="checkMap()">Comparer avec une proposition</button><button class="btn ghost" onclick="resetMap()">Réinitialiser</button></div>
+        <div class="feedback" id="mapFb"></div>
+        <label class="f">Quel critère avez-vous utilisé pour délimiter les zones ?</label>
+        <textarea data-k="m2_critere" placeholder="Temps de trajet, distance, présence de concurrents, axes routiers (A31, RN57)…"></textarea>
+      </div>
+    </div>
+    <div class="teacher"><b>Proposition indicative (isochrones voiture) :</b> primaire = Pont-à-Mousson, Blénod, Maidières, Montauville, Atton, Jézainville, Norroy, Dieulouard, Vandières ; secondaire = Pagny-sur-Moselle, Thiaucourt, Nomeny, Pompey ; tertiaire = Nancy, Metz, Toul. Accepter des écarts justifiés : la zone se réduit au nord et au sud du fait de la concurrence des agglomérations de Metz et Nancy.</div>
+  </div>
+  <div class="navfoot"><button class="btn ghost" onclick="go(1)">← Mission 1</button><button class="btn" onclick="go(3)">Mission 3 →</button></div>
+</section>
+
+<!-- ============ 3 MISSION 3 ============ -->
+<section class="panel" data-panel="3">
+  <div class="card">
+    <div class="kicker">Mission 3 · C1.1 · C3.1 · C4B.1</div>
+    <h2>Analyser le potentiel commercial du territoire</h2>
+    <p class="lead">La direction souhaite savoir quels secteurs géographiques présentent un intérêt pour le développement commercial.</p>
+    <ul class="tasks">
+      <li>Collecter des données utiles sur les communes du secteur.</li>
+      <li>Comparer population, activité économique, accessibilité et présence de concurrents.</li>
+      <li>Repérer les secteurs présentant des opportunités.</li>
+      <li>Justifier les secteurs retenus à partir de données.</li>
+    </ul>
+    <div class="callout blue"><b>Sources conseillées :</b> INSEE (fiches « Comparateur de territoire »), annuaire-entreprises.data.gouv.fr, Pappers, Pages Jaunes, Google Maps, site de la Communauté de communes du Bassin de Pont-à-Mousson.</div>
+  </div>
+
+  <div class="card docs"><div class="kicker">📂 Dossier ressources · Mission 3</div><h2>Les documents à exploiter</h2><p class="muted">Appuyez-vous sur ces documents (et sur les Docs 7, 8 et 13) pour les activités 3.1 à 3.3. Les documents marqués <span class="sim">Données simulées</span> sont construits pour l'exercice, à partir d'une situation réaliste.</p><details class="doc"><summary><span class="dn">Doc 11</span><span>Données démographiques des communes du secteur<br><span class="dtype">Données statistiques</span></span> <span class="real">Données réelles</span></summary><div class="docbody">
+<div class="tablewrap"><table>
+<tr><th>Commune</th><th>Population</th><th>Année</th><th>Type de donnée</th></tr>
+<tr><td>Pont-à-Mousson</td><td>14 383</td><td>2022</td><td>Population municipale INSEE</td></tr>
+<tr><td>Dieulouard</td><td>4 765</td><td>2023</td><td>Population DGF</td></tr>
+<tr><td>Blénod-lès-Pont-à-Mousson</td><td>4 680</td><td>2023</td><td>Population DGF</td></tr>
+<tr><td>Pagny-sur-Moselle</td><td>4 124</td><td>2023</td><td>Population DGF</td></tr>
+<tr><td>Maidières</td><td>1 557</td><td>2023</td><td>Population DGF</td></tr>
+<tr><td>Belleville</td><td>1 507</td><td>2023</td><td>Population DGF</td></tr>
+<tr><td>Norroy-lès-Pont-à-Mousson</td><td>1 224</td><td>2023</td><td>Population DGF</td></tr>
+<tr><td>Montauville</td><td>1 105</td><td>2023</td><td>Population DGF</td></tr>
+<tr><td>Jézainville</td><td>1 011</td><td>2023</td><td>Population DGF</td></tr>
+<tr><td>Vandières</td><td>942</td><td>2023</td><td>Population DGF</td></tr>
+<tr><td>Atton</td><td>895</td><td>2023</td><td>Population DGF</td></tr>
+<tr><td>Nomeny</td><td>1 135</td><td>2021</td><td>Population municipale INSEE</td></tr>
+<tr><td>Thiaucourt-Regniéville</td><td>1 117</td><td>2021</td><td>Population municipale INSEE</td></tr>
+<tr><td>Pompey</td><td>4 815</td><td>2022</td><td>Population municipale INSEE</td></tr>
+<tr><td>Toul</td><td>15 570</td><td>2022</td><td>Population municipale INSEE</td></tr>
+<tr><td>Nancy</td><td>104 387</td><td>2022</td><td>Population municipale INSEE</td></tr>
+<tr><td>Metz</td><td>121 695</td><td>2022</td><td>Population municipale INSEE</td></tr>
+</table></div>
+<div class="kpi"><div><strong>33</strong><span>communes dans la CC du Bassin de Pont-à-Mousson</span></div><div><strong>41 104</strong><span>habitants (population DGF 2023)</span></div><div><strong>≈ 511 000</strong><span>habitants dans l'aire urbaine de Nancy</span></div><div><strong>≈ 377 000</strong><span>habitants dans l'aire urbaine de Metz</span></div></div>
+<p class="muted"><b>Attention :</b> la population DGF, utilisée par l'État pour calculer les dotations des communes, est un peu plus élevée que la population municipale INSEE car elle compte aussi les résidences secondaires. Pour comparer, utilisez de préférence la même source : le « Comparateur de territoire » de l'INSEE (insee.fr).</p><div class="src">Source : Préfecture de Meurthe-et-Moselle, fiche « CC du Bassin de Pont-à-Mousson » (population DGF 2023) ; INSEE, populations municipales, citées par Wikipédia (articles des communes).</div></div></details><details class="doc"><summary><span class="dn">Doc 12</span><span>Le tissu économique du Bassin de Pont-à-Mousson<br><span class="dtype">Dossier économique</span></span> <span class="real">Texte réel</span> <span class="sim">Tableau simulé</span></summary><div class="docbody">
+<p><b>Un bassin industriel historique.</b> Le principal employeur est <b>Saint-Gobain PAM</b>, héritier des fonderies de Pont-à-Mousson créées en 1856, qui fabrique des canalisations en fonte ductile. On trouve aussi des activités de métallurgie, de construction mécanique et de production de béton (Vicat).</p>
+<p><b>Une économie qui se diversifie</b> : commerce, enseignement, santé, hôtellerie-restauration, services aux particuliers, artisanat du bâtiment.</p>
+<p><b>Un territoire de passage.</b> Situé entre Nancy et Metz, le bassin est traversé par l'A31. De nombreux habitants travaillent dans l'une des deux agglomérations et font chaque jour la route : ce sont des <b>navetteurs</b>, gros consommateurs de kilomètres.</p>
+<h4 style="margin:14px 0 6px">Estimation interne du nombre d'entreprises « cibles » par secteur</h4>
+<div class="tablewrap"><table>
+<tr><th>Secteur</th><th>Artisans BTP</th><th>Commerces & services</th><th>Professions de santé</th><th>Autres entreprises (transport, industrie…)</th><th>Total</th></tr>
+<tr><td>Pont-à-Mousson</td><td>95</td><td>210</td><td>70</td><td>45</td><td><b>420</b></td></tr>
+<tr><td>Blénod / Maidières / Montauville</td><td>60</td><td>75</td><td>25</td><td>30</td><td><b>190</b></td></tr>
+<tr><td>Dieulouard et alentours</td><td>55</td><td>50</td><td>15</td><td>25</td><td><b>145</b></td></tr>
+<tr><td>Pagny-sur-Moselle / Vandières</td><td>45</td><td>40</td><td>12</td><td>15</td><td><b>112</b></td></tr>
+<tr><td>Secteur Thiaucourt</td><td>30</td><td>20</td><td>6</td><td>14</td><td><b>70</b></td></tr>
+<tr><td>Secteur Nomeny</td><td>28</td><td>18</td><td>5</td><td>9</td><td><b>60</b></td></tr>
+</table></div>
+<p class="muted">Pour obtenir des chiffres réels, consultez annuaire-entreprises.data.gouv.fr ou le Comparateur de territoire de l'INSEE (rubrique « Établissements »).</p><div class="src">Source : Wikipédia, article « Pont-à-Mousson », section Économie (texte) ; tableau d'estimation construit pour l'exercice (chiffres fictifs).</div></div></details><details class="doc"><summary><span class="dn">Doc 13</span><span>La concurrence locale<br><span class="dtype">Relevé de terrain</span></span> <span class="real">Données réelles</span></summary><div class="docbody">
+<div class="tablewrap"><table>
+<tr><th>Concurrent</th><th>Marque(s)</th><th>Adresse</th><th>Type</th></tr>
+<tr><td>BYmyCAR Pont-à-Mousson</td><td>Renault, Dacia</td><td>Route de Briey, Pont-à-Mousson</td><td>Concession (VN, VO, atelier, location)</td></tr>
+<tr><td>EG Autos</td><td>Ford</td><td>95 avenue de Metz, Pont-à-Mousson</td><td>Concession / agent</td></tr>
+<tr><td>Jugand Autos</td><td>Multimarque</td><td>Pont-à-Mousson</td><td>Mandataire (véhicules neufs à prix remisés)</td></tr>
+<tr><td>Garage Gaudron</td><td>Toutes marques</td><td>81 avenue du Général de Gaulle, Dieulouard</td><td>Garage indépendant (après-vente)</td></tr>
+<tr><td>Garage ABS Auto</td><td>Toutes marques</td><td>18 rue Saint-Norbert, Villers-sous-Prény</td><td>Garage indépendant (après-vente)</td></tr>
+</table></div>
+<p><b>Dans les agglomérations voisines :</b> Nancy et Metz concentrent des concessions de presque toutes les marques, y compris d'autres sites Peugeot et Citroën. Pour un client de Pompey ou de Pagny-sur-Moselle, une concession de Nancy ou de Metz peut être aussi proche que Pont-à-Mousson.</p>
+<p class="muted"><b>Votre travail :</b> ce relevé est incomplet. Complétez-le avec Google Maps (recherche « concessionnaire automobile » et « garage » autour de Pont-à-Mousson) et notez dans quelle zone se trouve chaque concurrent.</p><div class="src">Source : BYmyCAR (fiche de la concession de Pont-à-Mousson) ; Pages Jaunes (EG Autos) ; jugandautos.com ; idGarages. Relevé d'octobre 2026, à vérifier.</div></div></details><details class="doc"><summary><span class="dn">Doc 14</span><span>Méthode : analyser et comparer le potentiel d'un secteur<br><span class="dtype">Fiche méthode</span></span></summary><div class="docbody">
+<p>Le <b>potentiel commercial</b> d'un secteur, c'est le volume d'affaires qu'on peut espérer y réaliser. Pour le comparer d'un secteur à l'autre, on utilise une <b>grille multicritère</b> :</p>
+<div class="tablewrap"><table>
+<tr><th>Critère</th><th>Question à se poser</th><th>Note 1</th><th>Note 5</th></tr>
+<tr><td>Population</td><td>Combien d'habitants (clients particuliers possibles) ?</td><td>Moins de 1 000</td><td>Plus de 10 000</td></tr>
+<tr><td>Activité économique</td><td>Combien d'entreprises (clients professionnels possibles) ?</td><td>Moins de 50</td><td>Plus de 300</td></tr>
+<tr><td>Accessibilité</td><td>Le client vient-il facilement à la concession ?</td><td>Plus de 25 min</td><td>Moins de 8 min</td></tr>
+<tr><td>Concurrence</td><td>Le client a-t-il une autre concession plus proche ?</td><td>Concurrents très proches</td><td>Aucun concurrent proche</td></tr>
+</table></div>
+<p><b>Ensuite :</b> additionnez les notes, classez les secteurs, puis <b>croisez avec le Doc 7</b>. Un secteur avec un bon score mais <b>peu de clients actuels</b> représente un <b>potentiel inexploité</b> : c'est là qu'il faut prospecter en priorité.</p>
+<p><b>Pour justifier :</b> « Je retiens le secteur X car <i>donnée chiffrée 1</i> + <i>donnée chiffrée 2</i>, alors que la concession n'y réalise que <i>n %</i> de ses ventes. »</p><div class="src">Source : fiche méthode rédigée pour le scénario.</div></div></details></div>
+
+  <div class="card">
+    <h3 style="margin-top:0">📊 Activité 3.1 — Tableau d'analyse du potentiel</h3>
+    <div class="uselink">📎 Ressources : Docs 8, 11, 12, 13 et 14</div>
+    <p class="muted">Renseignez les données collectées, puis notez chaque critère de 1 (faible) à 5 (fort). Pour la concurrence, 5 = peu de concurrents (c'est favorable). Le score et le classement se calculent automatiquement.</p>
+    <div class="tablewrap"><table class="pt" id="pt">
+      <thead><tr><th>Secteur / commune</th><th>Population (INSEE)</th><th>Activité éco. (nb entreprises…)</th><th>Accès (min)</th><th>Note pop.</th><th>Note éco.</th><th>Note accès</th><th>Note concur.</th><th>Score /20</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <div class="row"><button class="btn ghost sm" onclick="addRow()">+ Ajouter un secteur</button></div>
+    <h3>Classement des secteurs</h3>
+    <div class="rank" id="rank"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">🏁 Activité 3.2 — Repérage des concurrents</h3>
+    <div class="uselink">📎 Ressources : Doc 13 + recherche Google Maps</div>
+    <p class="muted">Recensez les concessions et garages concurrents sur la zone (Google Maps, Pages Jaunes). Une ligne par concurrent.</p>
+    <div class="tablewrap"><table class="pt" id="ct">
+      <thead><tr><th>Concurrent</th><th>Marque(s)</th><th>Localisation</th><th>Type (concession, agent, VO, garage indépendant)</th><th>Zone</th></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <div class="row"><button class="btn ghost sm" onclick="addComp()">+ Ajouter un concurrent</button></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">✍️ Activité 3.3 — Je justifie mes choix</h3>
+    <div class="uselink">📎 Ressources : Docs 7, 11, 12 et 14</div>
+    <label class="f">Secteurs retenus et justification chiffrée (3 à 5 lignes)</label>
+    <textarea data-k="m3_justif" style="min-height:120px" placeholder="Je retiens le secteur de … car sa population atteint … habitants, on y compte … entreprises, il est à … min de la concession et la concurrence y est …"></textarea>
+    <div class="teacher"><b>Attendus :</b> au moins deux secteurs retenus, chaque choix appuyé sur au moins deux données chiffrées et sourcées ; mention de l'influence de la concurrence de Nancy/Metz ; l'élève distingue « grande population » et « potentiel accessible ». Lecture attendue des Docs 7, 11 et 12 : Dieulouard et Pagny-sur-Moselle ont une population et un tissu d'entreprises proches de Blénod, mais pèsent moins dans les ventes ; ce sont des secteurs sous-exploités. Nancy et Metz sont très peuplées mais trop concurrentielles.</div>
+  </div>
+  <div class="navfoot"><button class="btn ghost" onclick="go(2)">← Mission 2</button><button class="btn" onclick="go(4)">Mission 4 →</button></div>
+</section>
+
+<!-- ============ 4 MISSION 4 ============ -->
+<section class="panel" data-panel="4">
+  <div class="card">
+    <div class="kicker">Mission 4 · C4B.2 · Découverte</div>
+    <h2>Repérer les premiers prospects à cibler</h2>
+    <p class="lead">L'analyse du territoire terminée, votre responsable souhaite commencer à préparer une future opération de prospection.</p>
+    <ul class="tasks">
+      <li>Identifier plusieurs profils de prospects potentiels.</li>
+      <li>Distinguer un simple client potentiel d'un prospect qui pourrait être qualifié.</li>
+      <li>Indiquer quelles informations seraient nécessaires pour qualifier ces prospects.</li>
+      <li>Formuler une première proposition de cible pour le scénario S2.</li>
+    </ul>
+  </div>
+
+  <div class="card docs"><div class="kicker">📂 Dossier ressources · Mission 4</div><h2>Les documents à exploiter</h2><p class="muted">Appuyez-vous sur ces documents pour les activités 4.1 à 4.4. Les documents marqués <span class="sim">Données simulées</span> sont construits pour l'exercice, à partir d'une situation réaliste.</p><details class="doc"><summary><span class="dn">Doc 15</span><span>Note du responsable des ventes<br><span class="dtype">Note interne</span></span> <span class="sim">Données simulées</span></summary><div class="docbody">
+<p style="font-family:Georgia,serif;background:var(--surface-2);padding:14px;border-radius:8px"><b>De :</b> M. Laurent, chef des ventes<br><b>À :</b> l'équipe commerciale<br><b>Objet :</b> préparation de l'opération de prospection<br><br>
+Bonjour à tous,<br><br>
+Cette année, nous visons <b>+10 % de ventes aux professionnels</b> et une hausse de la part de <b>véhicules électriques</b> dans nos ventes. Le constructeur nous accompagne avec des offres de LLD sur les utilitaires électriques et sur l'e-208 / ë-C3.<br><br>
+Je vous demande de me proposer <b>une cible prioritaire</b> pour notre première opération : un type de client, un secteur géographique et l'offre à mettre en avant. Appuyez-vous sur votre analyse du territoire. Je veux des arguments chiffrés, pas des impressions.<br><br>
+Merci, M. Laurent</p><div class="src">Source : note construite pour l'exercice (personnage fictif).</div></div></details><details class="doc"><summary><span class="dn">Doc 16</span><span>Extrait du fichier de contacts de la concession<br><span class="dtype">Extraction du logiciel de gestion clients</span></span> <span class="sim">Données simulées</span></summary><div class="docbody">
+<div class="tablewrap"><table>
+<tr><th>N°</th><th>Contact</th><th>Commune</th><th>Informations disponibles</th></tr>
+<tr><td>1</td><td>Électricité R. (artisan, 2 salariés)</td><td>Dieulouard</td><td>Tél. du gérant, 2 utilitaires de 2017, contrat d'entretien ailleurs</td></tr>
+<tr><td>2</td><td>« Des infirmiers du secteur »</td><td>?</td><td>Aucune</td></tr>
+<tr><td>3</td><td>Mme B., retraitée</td><td>Maidières</td><td>E-mail, cliente atelier depuis 2015, véhicule de 11 ans</td></tr>
+<tr><td>4</td><td>Auto-école du centre</td><td>Pagny-sur-Moselle</td><td>Adresse seulement, nombre de véhicules inconnu</td></tr>
+<tr><td>5</td><td>Paysagiste T. (EURL)</td><td>Jézainville</td><td>Tél., 1 benne + 1 fourgon, renouvellement prévu 2027, gérant décideur</td></tr>
+<tr><td>6</td><td>M. et Mme K., 2 enfants</td><td>Blénod</td><td>Ont fait un essai de 5008 ; budget 350 €/mois en LOA</td></tr>
+<tr><td>7</td><td>Mairie</td><td>Norroy-lès-PàM</td><td>Standard téléphonique, pas d'interlocuteur identifié</td></tr>
+<tr><td>8</td><td>« Les entreprises de la zone d'activité »</td><td>Pont-à-Mousson</td><td>Aucune</td></tr>
+<tr><td>9</td><td>M. D., 24 ans, navetteur vers Metz</td><td>Pagny-sur-Moselle</td><td>Tél., 25 000 km/an, cherche une électrique d'occasion</td></tr>
+<tr><td>10</td><td>Cabinet infirmier (3 associés)</td><td>Pont-à-Mousson</td><td>Site internet, aucune info sur les véhicules</td></tr>
+</table></div><div class="src">Source : extraction construite pour l'exercice (contacts fictifs).</div></div></details><details class="doc"><summary><span class="dn">Doc 17</span><span>Du client potentiel au prospect qualifié<br><span class="dtype">Fiche notion</span></span></summary><div class="docbody">
+<p>On ne prospecte pas « tout le monde ». Le commercial affine progressivement :</p>
+<div class="tablewrap"><table>
+<tr><th>Étape</th><th>Ce qu'on sait</th><th>Exemple</th></tr>
+<tr><td><b>1. Client potentiel</b></td><td>Une catégorie de personnes qui pourrait avoir besoin de l'offre.</td><td>« Les artisans du secteur »</td></tr>
+<tr><td><b>2. Prospect</b></td><td>Une personne ou entreprise identifiée et joignable.</td><td>Électricité R., Dieulouard, tél. connu</td></tr>
+<tr><td><b>3. Prospect qualifié</b></td><td>On connaît son besoin, son échéance, son budget et le décideur.</td><td>2 utilitaires à remplacer en 2027, gérant décideur</td></tr>
+</table></div>
+<p><b>Les informations de qualification</b> (méthode à approfondir en S2) :</p>
+<ul><li><b>Identification</b> : nom ou raison sociale, adresse, coordonnées, interlocuteur décideur.</li>
+<li><b>Situation actuelle</b> : véhicule(s) possédé(s), âge, kilométrage, marque, garage actuel.</li>
+<li><b>Besoin</b> : usage, kilométrage annuel, nombre de véhicules, motorisation souhaitée.</li>
+<li><b>Échéance</b> : date prévue de renouvellement.</li>
+<li><b>Budget et financement</b> : achat comptant, crédit, LOA, LLD.</li></ul>
+<p class="muted"><b>À ne jamais collecter :</b> les informations sans rapport avec l'achat (opinions, religion, santé…). Le RGPD impose de ne collecter que les données nécessaires.</p><div class="src">Source : fiche de synthèse rédigée pour le scénario ; principe de minimisation des données (RGPD, CNIL).</div></div></details><details class="doc"><summary><span class="dn">Doc 18</span><span>Profils de clientèle et besoins automobiles<br><span class="dtype">Tableau de synthèse</span></span></summary><div class="docbody">
+<div class="tablewrap"><table>
+<tr><th>Profil</th><th>Besoin principal</th><th>Offre adaptée</th><th>Où les trouver ?</th></tr>
+<tr><td>Artisans du BTP</td><td>Utilitaire fiable, charge utile</td><td>Partner, Expert, Berlingo, Jumpy · LLD pro</td><td>Annuaires, chambre de métiers</td></tr>
+<tr><td>TPE / PME</td><td>Petite flotte, maîtrise des coûts</td><td>LLD, contrats d'entretien</td><td>Zones d'activité, annuaire-entreprises</td></tr>
+<tr><td>Familles périurbaines</td><td>Espace, sécurité, budget mensuel</td><td>5008, C5 Aircross · LOA</td><td>Communes résidentielles</td></tr>
+<tr><td>Navetteurs Metz / Nancy</td><td>Faible coût au km, confort</td><td>e-208, ë-C3, hybrides</td><td>Communes proches de l'A31</td></tr>
+<tr><td>Jeunes conducteurs</td><td>Petit budget, première voiture</td><td>VO, 208, C3</td><td>Auto-écoles, lycées, réseaux sociaux</td></tr>
+<tr><td>Auto-écoles, taxis, VTC</td><td>Usage intensif, disponibilité</td><td>Contrats d'entretien, LLD</td><td>Annuaires professionnels</td></tr>
+<tr><td>Professions de santé</td><td>Nombreux petits trajets</td><td>Citadine électrique, LLD</td><td>Annuaire santé, cabinets</td></tr>
+<tr><td>Collectivités</td><td>Flotte publique, transition électrique</td><td>Utilitaires et citadines électriques</td><td>Mairies, communauté de communes</td></tr>
+<tr><td>Seniors</td><td>Confort, simplicité, service</td><td>2008, C3 Aircross, contrats d'entretien</td><td>Fichier atelier (clients fidèles)</td></tr>
+</table></div><div class="src">Source : tableau de synthèse rédigé pour le scénario (gammes Peugeot et Citroën 2026).</div></div></details></div>
+
+  <div class="card">
+    <h3 style="margin-top:0">👥 Activité 4.1 — Je sélectionne 3 profils prioritaires</h3>
+    <div class="uselink">📎 Ressources : Docs 15 et 18</div>
+    <p class="muted">Cliquez pour sélectionner jusqu'à 3 profils en cohérence avec votre analyse du territoire.</p>
+    <div class="grid3" id="profiles"></div>
+    <div id="profWhy"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">🎚️ Activité 4.2 — Client potentiel ou prospect qualifiable ?</h3>
+    <div class="uselink">📎 Ressources : Docs 16 et 17</div>
+    <p class="muted">Classez ces contacts tirés du Doc 16. Un prospect devient qualifiable lorsqu'on dispose d'informations permettant de le contacter et d'estimer son besoin.</p>
+    <div class="cls" id="cls2"></div>
+    <div class="row"><button class="btn" onclick="checkCls2()">Vérifier</button></div>
+    <div class="feedback" id="cls2Fb"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">🗂️ Activité 4.3 — Les informations nécessaires pour qualifier</h3>
+    <div class="uselink">📎 Ressources : Doc 17</div>
+    <p class="muted">Sélectionnez les informations à collecter pour qualifier un prospect.</p>
+    <div class="chips" id="qualChips"></div>
+    <div class="row"><button class="btn" onclick="checkChips('qualChips','qual')">Vérifier</button></div>
+    <div class="feedback" id="qualFb"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">🎯 Activité 4.4 — Ma proposition de cible pour le S2</h3>
+    <div class="uselink">📎 Ressources : Docs 7, 12, 15 et 18</div>
+    <div class="grid2">
+      <div><label class="f">Cible proposée</label><input type="text" data-k="m4_cible" placeholder="Ex. : artisans du BTP du secteur de Dieulouard"></div>
+      <div><label class="f">Secteur géographique</label><input type="text" data-k="m4_secteur"></div>
+      <div><label class="f">Offre à mettre en avant</label><input type="text" data-k="m4_offre" placeholder="VU, VE, LLD, contrat d'entretien…"></div>
+      <div><label class="f">Volume estimé de prospects</label><input type="text" data-k="m4_volume"></div>
+    </div>
+    <label class="f">Justification (lien avec les données des missions 2 et 3)</label>
+    <textarea data-k="m4_justif" style="min-height:110px"></textarea>
+    <div class="teacher"><b>Exemple de cible attendue :</b> artisans du BTP des secteurs de Dieulouard et Pagny-sur-Moselle (≈ 100 artisans selon le Doc 12), à 10-15 min de la concession, peu présents dans les ventes (8 % et 6 %), avec une offre LLD sur utilitaires électriques (Doc 15). Autres cibles acceptables si elles sont justifiées : navetteurs des communes proches de l'A31, professions de santé de Pont-à-Mousson.</div>
+  </div>
+  <div class="navfoot"><button class="btn ghost" onclick="go(3)">← Mission 3</button><button class="btn" onclick="go(5)">Bilan →</button></div>
+</section>
+
+<!-- ============ 5 BILAN ============ -->
+<section class="panel" data-panel="5">
+  <div class="card">
+    <div class="kicker">📄 Productions attendues</div>
+    <h2>Je vérifie mes productions</h2>
+    <p class="muted">Cochez chaque production terminée.</p>
+    <div class="prodlist" id="prods"></div>
+  </div>
+  <div class="card">
+    <div class="kicker">📁 Place dans le CPRO</div>
+    <h2>Analyse réflexive</h2>
+    <p>Conservez la carte de la zone de chalandise, l'analyse du potentiel et la justification de la première cible.</p>
+    <label class="f">Quelles informations m'ont permis d'identifier le potentiel commercial de cette zone ?</label>
+    <textarea data-k="cpro" style="min-height:120px"></textarea>
+    <label class="f">Auto-positionnement</label>
+    <div class="tablewrap"><table id="auto"><thead><tr><th>Compétence</th><th>Je ne sais pas encore</th><th>Je sais avec aide</th><th>Je sais seul(e)</th></tr></thead><tbody></tbody></table></div>
+  </div>
+  <div class="card">
+    <div class="kicker">🔗 Transition vers le scénario 2</div>
+    <h2>Et après ?</h2>
+    <div class="grid2">
+      <div class="callout blue" style="margin:0"><b>S1</b> a répondu à la question :<br>« <i>Où se trouve le potentiel commercial ?</i> »</div>
+      <div class="callout" style="margin:0"><b>S2</b> répondra à la question :<br>« <i>Qui sont précisément les prospects et comment les qualifier ?</i> »</div>
+    </div>
+    <p class="muted" style="margin-top:12px">Segmentation, ciblage approfondi, qualification du fichier et préparation de l'opération de prospection seront développés dans le scénario suivant.</p>
+    <div class="row"><button class="btn acc" onclick="exportAnswers()">⬇ Exporter mes réponses</button><button class="btn ghost" onclick="window.print()">🖨 Imprimer / PDF</button></div>
+  </div>
+  <div class="navfoot"><button class="btn ghost" onclick="go(4)">← Mission 4</button><span></span></div>
+</section>
+</main>
+
+<footer>Sources du contexte : sites officiels Peugeot et Citroën — Car Avenue Pont-à-Mousson (RN 57 et avenue Georges Guynemer, 54700). Données réelles : Préfecture de Meurthe-et-Moselle, INSEE, sites des marques et des concessions (relevés d'octobre 2026). Les documents marqués « données simulées » sont construits pour l'exercice. Document pédagogique, sans lien officiel avec les marques citées.</footer>
+
+<script>
+/* ---------- State ---------- */
+const KEY='s1_1mcvb_carAvenue';
+let S={};
+try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){S={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){} updateProgress()}
+
+/* ---------- Navigation ---------- */
+const navBtns=[...document.querySelectorAll('#stepnav button')];
+const panels=[...document.querySelectorAll('section.panel')];
+function go(i){
+  panels.forEach(p=>p.classList.toggle('active',+p.dataset.panel===i));
+  navBtns.forEach(b=>b.classList.toggle('active',+b.dataset.p===i));
+  S.page=i;save();window.scrollTo({top:document.querySelector('nav.steps').offsetTop,behavior:'smooth'});
+}
+navBtns.forEach(b=>b.onclick=()=>go(+b.dataset.p));
+function toggleProf(){document.body.classList.toggle('prof-mode');document.getElementById('profBtn').textContent=document.body.classList.contains('prof-mode')?'👁 Masquer corrigés':'👁 Mode enseignant'}
+
+/* ---------- Free fields ---------- */
+document.querySelectorAll('[data-k]').forEach(el=>{
+  if(S[el.dataset.k]) el.value=S[el.dataset.k];
+  el.addEventListener('input',()=>{S[el.dataset.k]=el.value;save()});
+});
+const eleve=document.getElementById('eleve');eleve.value=S.eleve||'';eleve.oninput=()=>{S.eleve=eleve.value;save()};
+
+/* ---------- Classify M1 ---------- */
+const CLS=[
+ ['Une famille de Blénod qui a acheté une C3 d\'occasion l\'an dernier','Client','Elle a déjà acheté : c\'est une cliente (à fidéliser).'],
+ ['Un plombier de Dieulouard qui roule en utilitaire d\'une autre marque','Prospect','Il a un besoin potentiel identifiable mais n\'a jamais acheté à la concession.'],
+ ['L\'organisme de financement qui propose les offres de LOA et de crédit','Partenaire','Il facilite la vente mais n\'est pas l\'acheteur final.'],
+ ['Une entreprise qui fait réviser ses véhicules à l\'atelier tous les ans','Client','Elle utilise les services après-vente : elle est déjà cliente.'],
+ ['Une auto-école de Pagny-sur-Moselle repérée sur Google Maps','Prospect','Identifiée, avec un besoin probable de véhicules, mais pas encore cliente.'],
+ ['Le constructeur Stellantis','Partenaire','Il fournit les véhicules et le réseau : partenaire du distributeur.'],
+ ['Un jeune salarié qui vient de demander un essai de Peugeot 208','Prospect','Il a manifesté un intérêt mais n\'a pas encore acheté.'],
+ ['Une compagnie d\'assurance qui oriente des sinistres vers la carrosserie','Partenaire','Elle apporte de l\'activité sans être l\'utilisatrice du véhicule.']
+];
+function renderCls(id,data,opts,stateKey){
+  const box=document.getElementById(id);box.innerHTML='';
+  S[stateKey]=S[stateKey]||{};
+  data.forEach((d,i)=>{
+    const it=document.createElement('div');it.className='item';
+    it.innerHTML=`<div>${d[0]}</div><div class="seg">${opts.map(o=>`<button data-o="${o}">${o}</button>`).join('')}</div><div class="why">${d[2]}</div>`;
+    it.querySelectorAll('.seg button').forEach(b=>{
+      if(S[stateKey][i]===b.dataset.o) b.classList.add('on');
+      b.onclick=()=>{it.querySelectorAll('.seg button').forEach(x=>x.classList.remove('on'));b.classList.add('on');it.classList.remove('good','bad');S[stateKey][i]=b.dataset.o;save()};
+    });
+    box.appendChild(it);
+  });
+}
+function checkGeneric(id,data,stateKey,fb){
+  let ok=0,ans=0;const items=document.querySelectorAll('#'+id+' .item');
+  data.forEach((d,i)=>{const a=S[stateKey][i];items[i].classList.remove('good','bad');if(a){ans++;items[i].classList.add(a===d[1]?'good':'bad');if(a===d[1])ok++}});
+  const f=document.getElementById(fb);
+  f.className='feedback '+(ok===data.length?'ok':'ko');
+  f.textContent=ans<data.length?`Répondez à toutes les lignes (${ans}/${data.length}). Bonnes réponses : ${ok}.`:`Score : ${ok}/${data.length}${ok===data.length?' — parfait !':' — relisez les explications.'}`;
+  S[stateKey+'_score']=ok+'/'+data.length;save();
+}
+renderCls('cls',CLS,['Client','Prospect','Partenaire'],'cls');
+function checkCls(){checkGeneric('cls',CLS,'cls','clsFb')}
+function resetCls(){S.cls={};renderCls('cls',CLS,['Client','Prospect','Partenaire'],'cls');document.getElementById('clsFb').className='feedback';save()}
+
+/* ---------- Chips ---------- */
+const CHIPS={
+ info:[['Coordonnées des entreprises du secteur',1],['Nombre d\'habitants par commune',1],['Localisation des concurrents',1],['Âge et composition du parc automobile',1],['Couleur préférée du directeur',0],['Offres promotionnelles en cours',1],['Résultats sportifs du club local',0],['Nouvelles implantations d\'entreprises',1],['Météo de la semaine',0]],
+ crit:[['Temps de trajet / accessibilité',1],['Proximité d\'axes routiers (A31, RN57)',1],['Présence de concurrents',1],['Notoriété des marques',1],['Qualité et rapidité du SAV',1],['Stationnement et facilité d\'accès',1],['Largeur de la gamme et stock VO',1],['Âge des vendeurs',0],['Couleur de la façade',0]],
+ qual:[['Identité / raison sociale',1],['Coordonnées et interlocuteur décisionnaire',1],['Véhicule actuel et ancienneté',1],['Usage et kilométrage annuel',1],['Taille de la flotte (pro)',1],['Échéance de renouvellement',1],['Budget / mode de financement envisagé',1],['Signe astrologique',0],['Opinion politique',0]]
+};
+function renderChips(id,k){
+  const box=document.getElementById(id);S['chips_'+k]=S['chips_'+k]||[];
+  CHIPS[k].forEach((c,i)=>{const b=document.createElement('button');b.className='chip'+(S['chips_'+k].includes(i)?' on':'');b.textContent=c[0];
+    b.onclick=()=>{b.classList.remove('good','bad');b.classList.toggle('on');const arr=S['chips_'+k];const p=arr.indexOf(i);p>-1?arr.splice(p,1):arr.push(i);save()};box.appendChild(b)});
+}
+function checkChips(id,k){
+  const btns=[...document.querySelectorAll('#'+id+' .chip')];let errs=0,missed=0;
+  CHIPS[k].forEach((c,i)=>{const on=btns[i].classList.contains('on');btns[i].classList.remove('good','bad');
+    if(on&&c[1])btns[i].classList.add('good');else if(on&&!c[1]){btns[i].classList.add('bad');errs++}else if(!on&&c[1])missed++;});
+  const f=document.getElementById(k+'Fb');f.className='feedback '+(errs+missed===0?'ok':'ko');
+  f.textContent=errs+missed===0?'Très bien : sélection pertinente et complète.':`${errs} intrus sélectionné(s), ${missed} élément(s) utile(s) oublié(s).`;
+  S['chips_'+k+'_score']=(errs+missed===0)?'réussi':'à revoir';save();
+}
+renderChips('infoChips','info');renderChips('critChips','crit');renderChips('qualChips','qual');
+
+/* ---------- Quiz ---------- */
+const QUIZ=[
+ ['La zone de chalandise d\'une concession, c\'est…',['L\'ensemble des clients enregistrés dans le fichier','L\'aire géographique d\'où provient l\'essentiel de sa clientèle','La surface du showroom','Le département où elle est implantée'],1,'Elle se définit par la provenance géographique des clients, pas par une limite administrative.'],
+ ['La zone primaire est généralement…',['La plus éloignée mais la plus rentable','Celle où la concurrence est la plus forte','La plus proche, qui concentre la plus forte part de clients','Celle des clients professionnels uniquement'],2,'La zone primaire est la plus proche du point de vente et la plus fidèle.'],
+ ['Pourquoi la zone de chalandise de Pont-à-Mousson est-elle « étirée » est-ouest plutôt que nord-sud ?',['À cause de la Moselle','Parce que les agglomérations de Nancy et Metz, au sud et au nord, ont leurs propres concessions','Parce qu\'il n\'y a pas de route vers le nord','Ce n\'est pas le cas'],1,'La concurrence des concessions de Nancy et Metz limite l\'attraction dans l\'axe de l\'A31.']
+];
+(function(){const box=document.getElementById('quiz');S.quiz=S.quiz||{};
+ QUIZ.forEach((q,i)=>{const d=document.createElement('div');d.className='q';d.innerHTML=`<p>${i+1}. ${q[0]}</p>`+q[1].map((o,j)=>`<button class="opt" data-j="${j}">${o}</button>`).join('')+`<div class="exp">💡 ${q[3]}</div>`;
+  const mark=j=>{d.classList.add('answered');d.querySelectorAll('.opt').forEach(b=>{b.classList.remove('right','wrong');const jj=+b.dataset.j;if(jj===q[2])b.classList.add('right');else if(jj===j)b.classList.add('wrong')})};
+  d.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{S.quiz[i]=+b.dataset.j;save();mark(+b.dataset.j)});
+  if(S.quiz[i]!==undefined)mark(S.quiz[i]);box.appendChild(d)});})();
+
+/* ---------- Map ---------- */
+// x,y schématiques (centre 260,260 = Pont-à-Mousson) ; z = proposition indicative
+const TOWNS=[
+ ['Pont-à-Mousson',260,260,1],['Blénod-lès-PàM',282,302,1],['Maidières',205,268,1,'L'],['Montauville',205,226,1,'L'],['Atton',322,240,1],['Jézainville',228,318,1,'L'],['Norroy-lès-PàM',275,205,1],['Dieulouard',292,338,1],['Vandières',232,182,1,'L'],
+ ['Pagny-sur-Moselle',245,118,2],['Thiaucourt',112,196,2],['Nomeny',398,312,2],['Pompey',262,410,2],
+ ['Metz',292,40,3],['Nancy',256,482,3],['Toul',72,420,3]
+];
+const ZCOL=['var(--surface)','var(--z1)','var(--z2)','var(--z3)'];
+let curZ=1;S.map=S.map||{};
+function drawMap(){
+  const svg=document.getElementById('map');
+  let h=`<path class="river" d="M300 0 C 280 120, 250 200, 268 260 S 270 380, 250 520"/>
+  <path class="road" d="M290 60 L268 150 L262 260 L272 334 L258 462"/>
+  <text x="300" y="20" class="ringlbl">Moselle / A31 · RN57</text>`;
+  [[85,'≈10 min'],[165,'≈20 min'],[238,'≈30 min']].forEach(r=>{h+=`<circle class="ring" cx="260" cy="260" r="${r[0]}"/><text class="ringlbl" x="${262+r[0]*.71}" y="${258-r[0]*.71}">${r[1]}</text>`});
+  h+=`<text x="10" y="510" class="ringlbl">N ↑ · positions schématiques</text>`;
+  TOWNS.forEach((t,i)=>{const z=S.map[i]||0;const big=i===0;
+    h+=`<g class="town" data-i="${i}"><circle cx="${t[1]}" cy="${t[2]}" r="${big?11:8}" fill="${ZCOL[z]}" stroke-width="2" style="stroke:${big?'var(--accent)':'var(--ink-2)'}"></circle><text x="${t[4]?t[1]-12:t[1]+12}" y="${t[2]+4}" text-anchor="${t[4]?'end':'start'}">${t[0]}</text></g>`});
+  svg.innerHTML=h;
+  svg.querySelectorAll('.town').forEach(g=>g.onclick=()=>{const i=+g.dataset.i;S.map[i]=curZ;save();drawMap()});
+  const names=['','Primaire','Secondaire','Tertiaire'];let L='';
+  [1,2,3].forEach(z=>{const l=TOWNS.filter((t,i)=>S.map[i]===z).map(t=>t[0]);L+=`<div><b>${names[z]} :</b> ${l.length?l.join(', '):'<span class="muted">—</span>'}</div>`});
+  document.getElementById('zlist').innerHTML=L;
+}
+document.querySelectorAll('#zonepick button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#zonepick button').forEach(x=>x.classList.remove('on'));b.classList.add('on');curZ=+b.dataset.z});
+function checkMap(){let ok=0,n=0;TOWNS.forEach((t,i)=>{if(S.map[i])n++;if(S.map[i]===t[3])ok++});
+  const f=document.getElementById('mapFb');f.className='feedback '+(ok>=13?'ok':'ko');
+  f.textContent=n<TOWNS.length?`Affectez toutes les communes (${n}/${TOWNS.length}).`:`${ok}/${TOWNS.length} communes concordent avec la proposition indicative. Les écarts sont acceptables s'ils sont justifiés par vos temps de trajet réels.`;
+  S.map_score=ok+'/'+TOWNS.length;save()}
+function resetMap(){S.map={};save();drawMap();document.getElementById('mapFb').className='feedback'}
+drawMap();
+
+/* ---------- Potentiel table ---------- */
+S.pt=S.pt||[['Pont-à-Mousson'],['Dieulouard'],['Pagny-sur-Moselle'],['Thiaucourt-Regniéville'],['Nomeny'],['Pompey']].map(r=>[r[0],'','','',3,3,3,3]);
+function renderPT(){
+  const tb=document.querySelector('#pt tbody');tb.innerHTML='';
+  S.pt.forEach((r,i)=>{const tr=document.createElement('tr');
+    tr.innerHTML=`<td><input type="text" value="${esc(r[0])}" data-c="0" style="min-width:140px"></td><td><input type="text" value="${esc(r[1])}" data-c="1" style="min-width:90px"></td><td><input type="text" value="${esc(r[2])}" data-c="2" style="min-width:120px"></td><td><input type="text" value="${esc(r[3])}" data-c="3" style="min-width:60px"></td>`+
+    [4,5,6,7].map(c=>`<td><select data-c="${c}">${[1,2,3,4,5].map(v=>`<option ${+r[c]===v?'selected':''}>${v}</option>`).join('')}</select></td>`).join('')+`<td class="score">${(+r[4]+ +r[5]+ +r[6]+ +r[7])}</td>`;
+    tr.querySelectorAll('[data-c]').forEach(el=>el.addEventListener('input',()=>{r[+el.dataset.c]=el.value;tr.querySelector('.score').textContent=(+r[4]+ +r[5]+ +r[6]+ +r[7]);save();renderRank()}));
+    tb.appendChild(tr)});
+  renderRank();
+}
+function renderRank(){const arr=S.pt.map(r=>({n:r[0]||'—',s:+r[4]+ +r[5]+ +r[6]+ +r[7]})).sort((a,b)=>b.s-a.s);
+  document.getElementById('rank').innerHTML=arr.map((a,i)=>`<div class="r"><span>${i+1}. ${esc(a.n)}</span><div class="b"><i style="width:${a.s/20*100}%"></i></div><b>${a.s}/20</b></div>`).join('')}
+function addRow(){S.pt.push(['','','','',3,3,3,3]);save();renderPT()}
+renderPT();
+S.ct=S.ct||[['','','','',''],['','','','',''],['','','','','']];
+function renderCT(){const tb=document.querySelector('#ct tbody');tb.innerHTML='';
+  S.ct.forEach(r=>{const tr=document.createElement('tr');tr.innerHTML=r.map((v,c)=>c===4?`<td><select data-c="4"><option></option>${['Primaire','Secondaire','Tertiaire'].map(z=>`<option ${v===z?'selected':''}>${z}</option>`).join('')}</select></td>`:`<td><input type="text" data-c="${c}" value="${esc(v)}" style="min-width:110px"></td>`).join('');
+  tr.querySelectorAll('[data-c]').forEach(el=>el.addEventListener('input',()=>{r[+el.dataset.c]=el.value;save()}));tb.appendChild(tr)})}
+function addComp(){S.ct.push(['','','','','']);save();renderCT()}
+renderCT();
+
+/* ---------- Profiles ---------- */
+const PROFILES=[
+ ['🧰','Artisans du BTP','Besoin d\'utilitaires, renouvellement régulier, forte présence sur les communes rurales.'],
+ ['🏢','TPE / PME locales','Petites flottes, intérêt pour la LLD et les contrats d\'entretien.'],
+ ['👨‍👩‍👧','Familles périurbaines','Ménages des communes résidentielles, besoin de SUV/monospaces, sensibles au financement.'],
+ ['🎓','Jeunes conducteurs','Premier véhicule, souvent VO ou citadine, budget serré.'],
+ ['⚡','Navetteurs vers Metz / Nancy','Gros kilométrage quotidien, cible pertinente pour l\'électrique ou l\'hybride.'],
+ ['🚗','Auto-écoles & taxis/VTC','Usage intensif, renouvellement fréquent, besoins SAV forts.'],
+ ['🏛️','Collectivités / mairies','Flottes publiques, achats via marchés publics, transition vers l\'électrique.'],
+ ['👵','Seniors / retraités','Renouvellement d\'un véhicule ancien, attentes de service et de proximité.'],
+ ['🏥','Professions de santé libérales','Infirmiers, aides à domicile : nombreux déplacements quotidiens.']
+];
+S.prof=S.prof||[];
+function renderProfiles(){const box=document.getElementById('profiles');box.innerHTML='';
+  PROFILES.forEach((p,i)=>{const d=document.createElement('div');d.className='prof'+(S.prof.includes(i)?' on':'');
+    d.innerHTML=`${S.prof.includes(i)?'<span class="pick">✓ Retenu</span>':''}<div class="ic">${p[0]}</div><h4>${p[1]}</h4><p>${p[2]}</p>`;
+    d.onclick=()=>{const k=S.prof.indexOf(i);if(k>-1)S.prof.splice(k,1);else{if(S.prof.length>=3){alert('Maximum 3 profils : retirez-en un d\'abord.');return}S.prof.push(i)}save();renderProfiles()};box.appendChild(d)});
+  const w=document.getElementById('profWhy');S.profWhy=S.profWhy||{};
+  w.innerHTML=S.prof.map(i=>`<label class="f">Pourquoi retenir « ${PROFILES[i][1]} » ? (donnée à l'appui)</label><textarea data-pw="${i}">${esc(S.profWhy[i]||'')}</textarea>`).join('');
+  w.querySelectorAll('[data-pw]').forEach(t=>t.oninput=()=>{S.profWhy[t.dataset.pw]=t.value;save()});
+}
+renderProfiles();
+
+const CLS2=[
+ ['Contact n°2 — « Des infirmiers du secteur »','Client potentiel','Une simple catégorie : ni nom, ni coordonnées, ni besoin connu.'],
+ ['Contact n°1 — Électricité R., Dieulouard : tél. du gérant, 2 utilitaires de 2017','Prospect qualifiable','Identifié, joignable, et son parc vieillissant laisse prévoir un besoin.'],
+ ['Contact n°8 — « Les entreprises de la zone d\'activité »','Client potentiel','Ensemble vague : aucune entreprise identifiée individuellement.'],
+ ['Contact n°5 — Paysagiste T., Jézainville : renouvellement prévu en 2027, gérant décideur','Prospect qualifiable','Besoin, échéance et décideur connus : très bon prospect.'],
+ ['Contact n°9 — M. D., navetteur, 25 000 km/an, cherche une électrique d\'occasion','Prospect qualifiable','Contact et besoin précis : il peut être qualifié rapidement.'],
+ ['« Les jeunes qui passent le permis cette année »','Client potentiel','Cible intéressante mais personne n\'est encore identifié.']
+];
+renderCls('cls2',CLS2,['Client potentiel','Prospect qualifiable'],'cls2');
+function checkCls2(){checkGeneric('cls2',CLS2,'cls2','cls2Fb')}
+
+/* ---------- Bilan ---------- */
+const PRODS=['Une fiche d\'identité commerciale synthétique de l\'entreprise','Une représentation de la zone de chalandise (zones primaire, secondaire, tertiaire)','Un tableau d\'analyse du potentiel commercial de plusieurs secteurs','Un repérage des concurrents et de leur localisation','Une première sélection de profils de prospects','Une courte justification de la cible proposée pour la suite'];
+S.prods=S.prods||[];
+(function(){const b=document.getElementById('prods');PRODS.forEach((p,i)=>{const l=document.createElement('label');l.innerHTML=`<input type="checkbox" ${S.prods.includes(i)?'checked':''}> ${p}`;
+ l.querySelector('input').onchange=e=>{const k=S.prods.indexOf(i);e.target.checked?(k<0&&S.prods.push(i)):S.prods.splice(k,1);save()};b.appendChild(l)})})();
+const COMPS=[['C1.1','Assurer la veille commerciale'],['C3.1','Traiter et exploiter l\'information'],['C4B.1','Rechercher et analyser les informations'],['C4B.2','Participer à la conception d\'une opération de prospection']];
+S.auto=S.auto||{};
+(function(){const tb=document.querySelector('#auto tbody');COMPS.forEach((c,i)=>{const tr=document.createElement('tr');tr.innerHTML=`<td><b class="code">${c[0]}</b> ${c[1]}</td>`+[0,1,2].map(v=>`<td style="text-align:center"><input type="radio" name="a${i}" value="${v}" ${S.auto[i]==v?'checked':''} style="width:18px;height:18px;accent-color:var(--brand)"></td>`).join('');
+ tr.querySelectorAll('input').forEach(r=>r.onchange=()=>{S.auto[i]=+r.value;save()});tb.appendChild(tr)})})();
+
+/* ---------- Progress ---------- */
+function updateProgress(){
+  const checks=[
+    ['m1_nom','m1_produits','m1_services'].every(k=>S[k]&&S[k].trim()),
+    S.cls&&Object.keys(S.cls).length===CLS.length,
+    S.chips_info_score,
+    S.quiz&&Object.keys(S.quiz).length===QUIZ.length,
+    S.chips_crit_score,
+    S.map&&Object.keys(S.map).filter(k=>S.map[k]).length===TOWNS.length,
+    S.pt&&S.pt.some(r=>r[1]),
+    S.ct&&S.ct.some(r=>r[0]),
+    S.m3_justif&&S.m3_justif.trim().length>30,
+    S.prof&&S.prof.length===3,
+    S.cls2&&Object.keys(S.cls2).length===CLS2.length,
+    S.chips_qual_score,
+    S.m4_cible&&S.m4_justif,
+    S.cpro&&S.cpro.trim().length>20
+  ];
+  const pct=Math.round(checks.filter(Boolean).length/checks.length*100);
+  document.getElementById('pbar').style.width=pct+'%';document.getElementById('ptxt').textContent=pct+' %';
+  const done=[true,checks.slice(0,3).every(Boolean),checks.slice(3,6).every(Boolean),checks.slice(6,9).every(Boolean),checks.slice(9,13).every(Boolean),checks[13]&&S.prods&&S.prods.length===6];
+  navBtns.forEach((b,i)=>b.classList.toggle('done',!!(i>0&&done[i])));
+}
+updateProgress();
+if(S.page)go(S.page);
+
+window.addEventListener('beforeprint',()=>document.querySelectorAll('details.doc').forEach(d=>d.open=true));
+/* ---------- Export ---------- */
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function exportAnswers(){
+  const v=k=>esc(S[k]||'—');const zn=['','Primaire','Secondaire','Tertiaire'];
+  const zones=[1,2,3].map(z=>`<li><b>${zn[z]}</b> : ${TOWNS.filter((t,i)=>S.map[i]===z).map(t=>t[0]).join(', ')||'—'}</li>`).join('');
+  const pt=S.pt.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join('')}<td><b>${+r[4]+ +r[5]+ +r[6]+ +r[7]}</b></td></tr>`).join('');
+  const ct=S.ct.filter(r=>r[0]).map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('');
+  const lv=['Pas encore','Avec aide','Seul(e)'];
+  const html=`<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>S1 1MCVB – ${v('eleve')}</title><style>body{font:14px/1.5 Arial,sans-serif;max-width:900px;margin:30px auto;padding:0 16px;color:#14213d}h1{color:#0f3b66}h2{color:#0f3b66;border-bottom:2px solid #e8892b;padding-bottom:4px;margin-top:28px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccd;padding:6px;text-align:left}th{background:#eef2f7}.b{background:#f4f6f9;padding:8px 12px;border-radius:6px;white-space:pre-wrap}</style></head><body>
+<h1>Scénario 1 – Car Avenue Peugeot Citroën Pont-à-Mousson</h1><p><b>Élève :</b> ${v('eleve')} · <b>Date :</b> ${new Date().toLocaleDateString('fr-FR')}</p>
+<h2>Mission 1 – Fiche d'identité</h2><table>${[['Enseigne','m1_nom'],['Groupe','m1_groupe'],['Adresse','m1_adresse'],['Marques','m1_marques'],['Activité','m1_activite'],['Horaires','m1_horaires'],['Produits','m1_produits'],['Services','m1_services'],['Clientèle','m1_clientele'],['Sources','m1_sources']].map(x=>`<tr><th>${x[0]}</th><td>${v(x[1])}</td></tr>`).join('')}</table>
+<p>Client / prospect / partenaire : <b>${S.cls_score||'non vérifié'}</b> · Informations utiles : <b>${S.chips_info_score||'non vérifié'}</b></p>
+<h2>Mission 2 – Zone de chalandise</h2><ul>${zones}</ul><p>Concordance avec la proposition : ${S.map_score||'non vérifiée'} · Critères d'attractivité : ${S.chips_crit_score||'non vérifié'}</p><p><b>Critère de délimitation :</b></p><div class="b">${v('m2_critere')}</div>
+<h2>Mission 3 – Potentiel commercial</h2><table><tr><th>Secteur</th><th>Pop.</th><th>Activité éco.</th><th>Accès</th><th>N.pop</th><th>N.éco</th><th>N.accès</th><th>N.conc.</th><th>Score</th></tr>${pt}</table>
+<p><b>Concurrents :</b></p><table><tr><th>Concurrent</th><th>Marques</th><th>Localisation</th><th>Type</th><th>Zone</th></tr>${ct||'<tr><td colspan=5>—</td></tr>'}</table><p><b>Justification :</b></p><div class="b">${v('m3_justif')}</div>
+<h2>Mission 4 – Prospects</h2><ul>${S.prof.map(i=>`<li><b>${PROFILES[i][1]}</b> : ${esc((S.profWhy||{})[i]||'—')}</li>`).join('')||'<li>—</li>'}</ul>
+<p>Client potentiel / prospect qualifiable : <b>${S.cls2_score||'non vérifié'}</b> · Infos de qualification : <b>${S.chips_qual_score||'non vérifié'}</b></p>
+<table><tr><th>Cible</th><td>${v('m4_cible')}</td></tr><tr><th>Secteur</th><td>${v('m4_secteur')}</td></tr><tr><th>Offre</th><td>${v('m4_offre')}</td></tr><tr><th>Volume</th><td>${v('m4_volume')}</td></tr></table><div class="b">${v('m4_justif')}</div>
+<h2>Bilan & CPRO</h2><div class="b">${v('cpro')}</div><table>${COMPS.map((c,i)=>`<tr><th>${c[0]} ${c[1]}</th><td>${S.auto[i]!==undefined?lv[S.auto[i]]:'—'}</td></tr>`).join('')}</table>
+<p>Productions terminées : ${S.prods.length}/6</p></body></html>`;
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+  a.download=`S1_1MCVB_${(S.eleve||'eleve').replace(/\s+/g,'_')}.html`;document.body.appendChild(a);a.click();a.remove();
+}
+</script>
+</body>
+</html>
